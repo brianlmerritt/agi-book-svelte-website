@@ -44,10 +44,10 @@
             texture.magFilter = THREE.LinearFilter;
         });
         
-        // Iris geometry (hemisphere) - increased size for better visibility
-        const geometry = new THREE.SphereGeometry(3, 64, 32, 0, Math.PI * 2, 0, Math.PI * 0.5);
+        // Use a circular plane instead of hemisphere - this will display the eye properly
+        const geometry = new THREE.PlaneGeometry(4, 4, 64, 64);
         
-        // Shader material for the iris with texture
+        // Create a circular mask in the shader
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 time: { value: 0 },
@@ -66,10 +66,10 @@
                     vNormal = normal;
                     vPosition = position;
                     
-                    vec3 pos = position;
                     // Subtle breathing animation
-                    float breathe = sin(time * 1.5) * 0.02;
-                    pos += normal * breathe;
+                    vec3 pos = position;
+                    float breathe = sin(time * 1.5) * 0.01;
+                    pos.z += breathe;
                     
                     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
                 }
@@ -84,24 +84,27 @@
                 uniform float opacity;
                 
                 void main() {
+                    // Create circular mask
+                    vec2 center = vec2(0.5, 0.5);
+                    float dist = distance(vUv, center);
+                    if (dist > 0.5) discard; // Create circular shape
+                    
                     // Sample the eye texture
                     vec4 textureColor = texture2D(eyeTexture, vUv);
                     
                     // Add subtle shimmer effect
-                    float shimmer = sin(vUv.x * 30.0 + time * 2.0) * sin(vUv.y * 30.0 - time * 1.5) * 0.05;
+                    float shimmer = sin(vUv.x * 20.0 + time * 2.0) * sin(vUv.y * 20.0 - time * 1.5) * 0.03;
                     
                     // Dynamic lighting based on mouse position
-                    vec3 lightDir = normalize(vec3(mousePos.x, mousePos.y, 1.0));
-                    float lighting = dot(vNormal, lightDir) * 0.3 + 0.7;
+                    vec3 lightDir = normalize(vec3(mousePos.x * 0.5, mousePos.y * 0.5, 1.0));
+                    float lighting = dot(vNormal, lightDir) * 0.2 + 0.8;
                     
                     // Enhance the texture with lighting and shimmer
                     vec3 finalColor = textureColor.rgb * lighting + shimmer;
                     
-                    // Add subtle glow to edges
-                    vec2 center = vec2(0.5, 0.5);
-                    float dist = distance(vUv, center);
-                    float edgeGlow = 1.0 - smoothstep(0.4, 0.5, dist);
-                    finalColor += edgeGlow * 0.1 * vec3(0.6, 0.8, 1.0);
+                    // Add subtle edge glow
+                    float edgeGlow = 1.0 - smoothstep(0.45, 0.5, dist);
+                    finalColor += edgeGlow * 0.05 * vec3(0.6, 0.8, 1.0);
                     
                     gl_FragColor = vec4(finalColor, textureColor.a * opacity);
                 }
@@ -111,9 +114,9 @@
         });
         
         iris = new THREE.Mesh(geometry, material);
-        // Position the iris so it's properly centered and visible
+        // Position the iris facing the camera
         iris.position.set(0, 0, 0);
-        iris.rotation.x = -Math.PI * 0.1; // Slight tilt to make it look more natural
+        // No initial rotation - let it face directly at the camera
         scene.add(iris);
         
         // Enhanced lighting for better eye visibility
@@ -134,20 +137,22 @@
         rimLight2.position.set(-3, -3, 3);
         scene.add(rimLight2);
         
-        // Mouse movement handler with enhanced iris tracking
+        // Mouse movement handler - iris follows mouse like a real eye
         const handleMouseMove = (e: MouseEvent) => {
             mouseX = (e.clientX / window.innerWidth) * 2 - 1;
             mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
             
-            // Smooth iris rotation to follow mouse (like a real eye)
+            // Rotate the iris to "look at" the mouse position
+            // Scale down the movement for more realistic eye tracking
+            const maxRotation = 0.3; // Maximum rotation in radians
             gsap.to(iris.rotation, {
-                x: mouseY * 0.15 - Math.PI * 0.1, // Keep the slight downward tilt
-                y: mouseX * 0.15,
-                duration: 0.6,
+                x: mouseY * maxRotation,
+                y: mouseX * maxRotation,
+                duration: 0.8,
                 ease: "power2.out"
             });
             
-            // Update shader uniforms
+            // Update shader uniforms for lighting effects
             material.uniforms.mousePos.value.set(mouseX, mouseY);
         };
         
@@ -157,8 +162,13 @@
         const animate = () => {
             requestAnimationFrame(animate);
             
+            // Update time for subtle animations
             material.uniforms.time.value += 0.01;
-            iris.rotation.z += 0.001;
+            
+            // Subtle idle rotation when not tracking mouse
+            if (Math.abs(mouseX) < 0.1 && Math.abs(mouseY) < 0.1) {
+                iris.rotation.z += 0.0005;
+            }
             
             renderer.render(scene, camera);
         };
