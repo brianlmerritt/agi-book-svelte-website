@@ -80,32 +80,35 @@
 				varying vec3 vNormal;
 				uniform float time;
 				uniform sampler2D eyeTexture;
-				uniform float textureZoom; // Use the zoom uniform
+				uniform float textureZoom;
 				
 				void main() {
-					// Center UVs, apply zoom, then shift back. This zooms from the center of the texture.
+					// Center UVs, apply zoom, then shift back
 					vec2 zoomedUv = (vUv - 0.5) * textureZoom + 0.5;
 					
 					vec3 finalColor;
-					float finalAlpha;
+					float finalAlpha = 1.0;
+					
+					// Define sclera (white part of eye) color
+					vec3 scleraColor = vec3(0.9, 0.9, 0.95);
 
-					// FIX: Check if the zoomed UV is within the texture's 0-1 range.
+					// Check if the zoomed UV is within the texture's 0-1 range
 					if (zoomedUv.x > 1.0 || zoomedUv.x < 0.0 || zoomedUv.y > 1.0 || zoomedUv.y < 0.0) {
-						// If outside the iris texture, draw the sclera (white part of the eye).
-						// This prevents the texture smearing effect.
-						finalColor = vec3(0.9, 0.9, 0.95); // A slightly blueish white for the sclera.
-						finalAlpha = 1.0;
+						// Outside texture bounds - render sclera
+						finalColor = scleraColor;
 					} else {
-						// If inside the bounds, draw the iris texture.
+						// Inside bounds - sample texture and blend with sclera based on alpha
 						vec4 textureColor = texture2D(eyeTexture, zoomedUv);
-						finalColor = textureColor.rgb;
-						finalAlpha = textureColor.a;
+						
+						// OPTION 2: Proper alpha blending with sclera
+						// This respects PNG transparency and creates smooth transitions
+						finalColor = mix(scleraColor, textureColor.rgb, textureColor.a);
 					}
 					
 					// Add subtle shimmer over the whole eye surface
 					float shimmer = sin(vUv.x * 15.0 + time * 2.0) * sin(vUv.y * 15.0 - time * 1.5) * 0.02;
 					
-					// Lighting with a fixed direction (since mouse tracking is off)
+					// Lighting with a fixed direction
 					vec3 lightDirection = normalize(vec3(0.5, 0.5, 1.0));
 					float lighting = max(dot(vNormal, lightDirection), 0.3) + 0.7;
 					
