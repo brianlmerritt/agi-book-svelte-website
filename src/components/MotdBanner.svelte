@@ -63,6 +63,7 @@
 <div 
   bind:this={bannerRef}
   class="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-cosmic-purple/90 to-nebula-pink/90 backdrop-blur-md border-t border-star-white/20"
+  role="region"
   onmouseenter={() => isPaused = true}
   onmouseleave={() => isPaused = false}
 >

@@ -5,7 +5,7 @@
     const mobileQuery = new MediaQuery('(max-width: 768px)');
   </script>
   
-  <nav class="fixed top-0 left-0 right-0 z-50 bg-space-blue/90 backdrop-blur-md border-b border-cosmic-purple/20">
+  <nav role="region" class="fixed top-0 left-0 right-0 z-50 bg-space-blue/90 backdrop-blur-md border-b border-cosmic-purple/20">
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <!-- Logo -->
@@ -23,7 +23,10 @@
             <a href="#buy" class="hover:text-nebula-pink transition-colors">Buy AI Prompt Kit</a>
             <a href="#characters" class="hover:text-nebula-pink transition-colors">Meet Characters</a>
             <a href="#community" class="hover:text-nebula-pink transition-colors">Meet Community</a>
-            <button class="w-10 h-10 rounded-full bg-gradient-to-r from-cosmic-purple to-nebula-pink p-0.5">
+            <button
+              class="w-10 h-10 rounded-full bg-gradient-to-r from-cosmic-purple to-nebula-pink p-0.5"
+              aria-label="Open menu"
+            >
               <div class="w-full h-full bg-space-blue rounded-full flex items-center justify-center">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />

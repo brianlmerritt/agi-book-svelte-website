@@ -193,7 +193,7 @@
 	});
 </script>
 
-<div class="fixed inset-0 -z-10">
+<div class="fixed inset-0 -z-10" role="region">
 	<canvas bind:this={canvas} class="w-full h-full"></canvas>
 	
 	<!-- Gradient overlay -->
@@ -209,28 +209,28 @@
 
 <!-- Debug Controls - Only show when in manual mode -->
 {#if controlMode === 'manual'}
-<div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-lg p-4 bg-black/50 rounded-lg backdrop-blur-sm text-white font-mono text-xs z-10 space-y-3">
+<div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-lg p-4 bg-black/50 rounded-lg backdrop-blur-sm text-white font-mono text-xs z-10 space-y-3" role="region">
 	<!-- Rotation Sliders -->
 	<div>
-		<label>Rotation X: {Number(rotationX).toFixed(2)}</label>
-		<input type="range" bind:value={rotationX} min={-Math.PI} max={Math.PI} step="0.01">
+		<label for="rotation-x">Rotation X: {Number(rotationX).toFixed(2)}</label>
+		<input id="rotation-x" type="range" bind:value={rotationX} min={-Math.PI} max={Math.PI} step="0.01">
 	</div>
 	<div>
-		<label>Rotation Y: {Number(rotationY).toFixed(2)}</label>
-		<input type="range" bind:value={rotationY} min={-Math.PI} max={Math.PI} step="0.01">
+		<label for="rotation-y">Rotation Y: {Number(rotationY).toFixed(2)}</label>
+		<input id="rotation-y" type="range" bind:value={rotationY} min={-Math.PI} max={Math.PI} step="0.01">
 	</div>
 	<div>
-		<label>Rotation Z: {Number(rotationZ).toFixed(2)}</label>
-		<input type="range" bind:value={rotationZ} min={-Math.PI} max={Math.PI} step="0.01">
+		<label for="rotation-z">Rotation Z: {Number(rotationZ).toFixed(2)}</label>
+		<input id="rotation-z" type="range" bind:value={rotationZ} min={-Math.PI} max={Math.PI} step="0.01">
 	</div>
 	<!-- Texture Sliders -->
 	<div>
-		<label>Texture Zoom: {Number(textureZoom).toFixed(2)}</label>
-		<input type="range" bind:value={textureZoom} min="0.1" max="5" step="0.01">
+		<label for="texture-zoom">Texture Zoom: {Number(textureZoom).toFixed(2)}</label>
+		<input id="texture-zoom" type="range" bind:value={textureZoom} min="0.1" max="5" step="0.01">
 	</div>
 	<div>
-		<label>Aspect Ratio: {Number(aspectRatio).toFixed(2)}</label>
-		<input type="range" bind:value={aspectRatio} min="0.1" max="3.0" step="0.01">
+		<label for="aspect-ratio">Aspect Ratio: {Number(aspectRatio).toFixed(2)}</label>
+		<input id="aspect-ratio" type="range" bind:value={aspectRatio} min="0.1" max="3.0" step="0.01">
 	</div>
 </div>
 {/if}
