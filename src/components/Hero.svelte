@@ -39,7 +39,7 @@
 		
 		// Load eye texture
 		const textureLoader = new THREE.TextureLoader();
-		const eyeTexture = textureLoader.load('/assets/eye-texture.png', (texture) => {
+		const eyeTexture = textureLoader.load('/assets/iris_floating.png', (texture) => {
 			texture.wrapS = THREE.ClampToEdgeWrapping;
 			texture.wrapT = THREE.ClampToEdgeWrapping;
 			texture.minFilter = THREE.LinearFilter;
