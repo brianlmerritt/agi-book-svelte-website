@@ -1,33 +1,28 @@
 <script lang="ts">
     import { gsap } from 'gsap';
     import { useIntersectionObserver } from 'runed';
+    import TopLeftFeature from './TopLeftFeature.svelte';
+    import TopRightFeature from './TopRightFeature.svelte';
+    import BottomLeftFeature from './BottomLeftFeature.svelte';
+    import BottomRightFeature from './BottomRightFeature.svelte';
+    import featuresData from '../data/features.json';
     
-    interface Feature {
-      icon: string;
+    type Feature = {
+      corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
       title: string;
       description: string;
-    }
-    
-    const features: Feature[] = [
-      {
-        icon: '🌌',
-        title: 'Immersive World',
-        description: 'Dive into a richly detailed universe where AI consciousness awakens and humanity faces its greatest evolution.'
-      },
-      {
-        icon: '🤖',
-        title: 'AI-Written Narrative',
-        description: 'Experience a story crafted by advanced AI, exploring themes of consciousness, identity, and transcendence.'
-      },
-      {
-        icon: '💫',
-        title: 'Interactive Prompts',
-        description: 'Shape the narrative with AI prompt tools. Create your own chapters and explore alternate storylines.'
-      }
-    ];
+      icon: string;
+    };
+    const features = featuresData as Feature[];
     
     let featuresRef: HTMLElement;
     let hasAnimated = false;
+    
+    // Find features by corner
+    const topLeft = features.find(f => f.corner === 'top-left');
+    const topRight = features.find(f => f.corner === 'top-right');
+    const bottomLeft = features.find(f => f.corner === 'bottom-left');
+    const bottomRight = features.find(f => f.corner === 'bottom-right');
     
     $: if (featuresRef) {
       useIntersectionObserver(
@@ -48,6 +43,22 @@
       );
     }
 </script>
+
+<!-- Overlay triangles, no scrolling -->
+<div style="position:fixed; inset:0; pointer-events:none; z-index:20;">
+  {#if topLeft}
+    <TopLeftFeature feature={topLeft} />
+  {/if}
+  {#if topRight}
+    <TopRightFeature feature={topRight} />
+  {/if}
+  {#if bottomLeft}
+    <BottomLeftFeature feature={bottomLeft} />
+  {/if}
+  {#if bottomRight}
+    <BottomRightFeature feature={bottomRight} />
+  {/if}
+</div>
 
 <section bind:this={featuresRef} class="relative py-20 px-4">
   <div class="container mx-auto">
@@ -102,5 +113,9 @@
     to {
       transform: rotate(360deg);
     }
+  }
+
+  :global(body) {
+    overflow: hidden;
   }
 </style>

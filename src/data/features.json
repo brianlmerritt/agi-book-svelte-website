@@ -1,0 +1,26 @@
+[
+  {
+    "corner": "top-left",
+    "title": "Immersive World",
+    "description": "Explore a universe where AI awakens.",
+    "icon": "🌌"
+  },
+  {
+    "corner": "top-right",
+    "title": "AI Narrative",
+    "description": "A story crafted by advanced AI.",
+    "icon": "🤖"
+  },
+  {
+    "corner": "bottom-left",
+    "title": "Interactive Prompts",
+    "description": "Shape the narrative with your input.",
+    "icon": "💫"
+  },
+  {
+    "corner": "bottom-right",
+    "title": "Community",
+    "description": "Join a vibrant community of readers.",
+    "icon": "👥"
+  }
+] 
