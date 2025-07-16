@@ -60,9 +60,9 @@
 </div>
 
 {#if openModal === 'bottom-right'}
-  <div bind:this={modalRef} class="feature-modal bottom-right-modal" style={`position:fixed; top:72px; left:0; right:0; bottom:82px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
+  <div bind:this={modalRef} class="feature-modal bottom-right-modal" style={`position:fixed; top:72px; left:0; right:0; bottom:82px; z-index:60; background-color:rgba(20,16,40,0.97); background-image:url('/assets/worlds/earth_circuit_board.png'); background-size:cover; background-position:center; background-repeat:no-repeat; display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
     <button class="close-btn" style="position:absolute; bottom:1.5rem; right:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
-    <div class="modal-content" style="margin:auto; color:white; text-align:center;">
+    <div class="modal-content" style="margin:auto; color:white; text-align:center; background-color:#4A90E2; border:3px solid #FFD700; border-radius:20px; padding:2rem; max-width:600px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
       {#if layout === 'bottom'}
         <div style="font-size:3rem;">{feature.icon}</div>
         <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
@@ -71,7 +71,7 @@
         <div style="font-size:3rem;">{feature.icon}</div>
       {/if}
       <p style="font-size:1.2rem;">{feature.description}</p>
-      <div style="margin-top:2rem;">(Filler modal content)</div>
+      <div style="margin-top:2rem; font-size:2rem;">Coming Soon!</div>
     </div>
   </div>
 {/if}
