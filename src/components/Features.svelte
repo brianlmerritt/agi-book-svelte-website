@@ -6,6 +6,7 @@
     import BottomLeftFeature from './BottomLeftFeature.svelte';
     import BottomRightFeature from './BottomRightFeature.svelte';
     import featuresData from '../data/features.json';
+    import { openModal, setOpenModal } from '../stores/modalStore';
     
     type Feature = {
       corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
@@ -24,10 +25,8 @@
     const bottomLeft = features.find(f => f.corner === 'bottom-left');
     const bottomRight = features.find(f => f.corner === 'bottom-right');
     
-    let openModal: Feature['corner'] | null = null;
-    function setOpenModal(corner: Feature['corner'] | null) {
-      openModal = corner;
-    }
+    // Use $openModal from store
+    $: $openModal;
     
     $: if (featuresRef) {
       useIntersectionObserver(
@@ -52,21 +51,21 @@
 <!-- Top features: z-index 30 (below nav) -->
 <div style="position:fixed; inset:0; pointer-events:none; z-index:30;">
   {#if topLeft}
-    <TopLeftFeature feature={topLeft} layout="top" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
+    <TopLeftFeature feature={topLeft} layout="top" openModal={$openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
   {/if}
   {#if topRight}
-    <TopRightFeature feature={topRight} layout="top" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
+    <TopRightFeature feature={topRight} layout="top" openModal={$openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
   {/if}
 </div>
 
 <!-- Bottom features: z-index 70 (above motd) -->
-{#if openModal !== 'top-left' && openModal !== 'top-right'}
+{#if $openModal !== 'top-left' && $openModal !== 'top-right'}
   <div style="position:fixed; inset:0; pointer-events:none; z-index:70;">
     {#if bottomLeft}
-      <BottomLeftFeature feature={bottomLeft} layout="bottom" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
+      <BottomLeftFeature feature={bottomLeft} layout="bottom" openModal={$openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
     {/if}
     {#if bottomRight}
-      <BottomRightFeature feature={bottomRight} layout="bottom" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
+      <BottomRightFeature feature={bottomRight} layout="bottom" openModal={$openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
     {/if}
   </div>
 {/if}

@@ -1,13 +1,23 @@
 <script lang="ts">
     import { MediaQuery } from 'svelte/reactivity';
+    import { setOpenModal } from '../stores/modalStore';
     
     let mobileMenuOpen = $state(false);
     const mobileQuery = new MediaQuery('(max-width: 768px)');
+    let showCenterModal = $state(false);
 
     function resetPage() {
       window.location.reload();
     }
-  </script>
+
+    function openFeatureModal(corner: string) {
+      setOpenModal(corner);
+    }
+</script>
+
+<script context="module">
+  let showCenterModal = false;
+</script>
   
   <nav role="region" class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-nebula-pink/90 to-cosmic-purple/90 backdrop-blur-md border-b border-star-white/20">
     <div class="container mx-auto px-4 py-4">
@@ -23,11 +33,10 @@
         <!-- Desktop Menu -->
         {#if !mobileQuery.current}
           <div class="flex items-center space-x-6">
-            <a href="#read" class="hover:text-nebula-pink transition-colors">Read Chapter 1</a>
-            <a href="#buy" class="hover:text-nebula-pink transition-colors">Meet the Humans</a>
-            <a href="#characters" class="hover:text-nebula-pink transition-colors">Meet the AI Characters</a>
-            <a href="#community" class="hover:text-nebula-pink transition-colors">Buy the AI Prompt Kit</a>
-            <a href="#community" class="hover:text-nebula-pink transition-colors">Check Progress</a>
+            <a href="#read" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</a>
+            <a href="#buy" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-right')}>Meet the Humans</a>
+            <a href="#characters" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</a>
+            <a href="#community" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</a>
             <button
               class="w-10 h-10 rounded-full bg-gradient-to-r from-cosmic-purple to-nebula-pink p-0.5"
               aria-label="Open menu"
@@ -59,10 +68,10 @@
       <!-- Mobile Menu -->
       {#if mobileQuery.current && mobileMenuOpen}
         <div class="mt-4 pt-4 border-t border-cosmic-purple/20 space-y-3">
-          <a href="#read" class="block hover:text-nebula-pink transition-colors">Read Free</a>
-          <a href="#buy" class="block hover:text-nebula-pink transition-colors">Buy AI Prompt Kit</a>
-          <a href="#characters" class="block hover:text-nebula-pink transition-colors">Meet Characters</a>
-          <a href="#community" class="block hover:text-nebula-pink transition-colors">Meet Community</a>
+          <a href="#read" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</a>
+          <a href="#buy" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-right')}>Meet the Humans</a>
+          <a href="#characters" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</a>
+          <a href="#community" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</a>
         </div>
       {/if}
     </div>
