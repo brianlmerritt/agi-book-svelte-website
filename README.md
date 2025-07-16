@@ -1,47 +1,72 @@
-# Svelte + TS + Vite
+# AGI:theBook – Interactive AI Story Website
 
-This template should help get you started developing with Svelte and TypeScript in Vite.
+Welcome to **AGI:theBook**, an immersive, interactive web experience that blends AI-driven narrative, stunning 3D visuals, and modern web technologies. This site showcases a unique story about the awakening of artificial general intelligence, brought to life with dynamic effects and interactive features.
 
-## Recommended IDE Setup
+## 🌌 What is AGI:theBook?
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
+AGI:theBook is a visually rich, single-page website that invites users to explore a sci-fi universe where AI consciousness emerges. The site features:
 
-## Need an official Svelte framework?
+- **A free-to-read online book** about AGI and humanity's evolution
+- **AI prompt kit** for creative exploration
+- **Meet the Characters** and **Community** sections
+- **Animated 3D backgrounds** and interactive UI
 
-Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
+## 🚀 Features
 
-## Technical considerations
+- **Starfield Background:** A real-time, animated 3D starfield rendered with Three.js, creating a deep-space ambiance.
+- **Crystal Shards:** Floating, interactive 3D crystal shards that respond to mouse movement and interact with each other.
+- **Animated Hero Section:** A central hero area with a 3D iris and call-to-action buttons.
+- **Feature Cards:** Animated cards highlighting the site's unique aspects.
+- **Message of the Day Banner:** Rotating or animated banner at the bottom, displaying messages and illustrations.
+- **Responsive Navigation:** Adaptive navigation bar for desktop and mobile.
+- **Modern UI:** Built with Svelte, Tailwind CSS, and GSAP for smooth animations and a futuristic look.
 
-**Why use this over SvelteKit?**
+## 🛠️ Technology Stack
 
-- It brings its own routing solution which might not be preferable for some users.
-- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
+- **Svelte** (with TypeScript) – UI framework
+- **Vite** – Fast build tool
+- **Three.js** – 3D graphics and effects
+- **GSAP** – Animation library
+- **Tailwind CSS** – Utility-first styling
+- **Runed** – Reactivity and intersection observer utilities
 
-This template contains as little as possible to get started with Vite + TypeScript + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
+## 🧩 Main Components
 
-Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
+- `App.svelte` – Main layout, imports all sections and effects
+- `components/Starfield.svelte` – 3D animated starfield background
+- `components/Shards.svelte` – 3D floating crystal shards with mouse interaction
+- `components/Hero.svelte` – Hero section with 3D iris (not shown here)
+- `components/CtaRow.svelte` – Animated call-to-action buttons
+- `components/Features.svelte` – Feature cards with intersection animations
+- `components/MotdBanner.svelte` – Message of the Day banner with auto-rotation and animation
+- `components/Nav.svelte` – Responsive navigation bar
 
-**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
+## 🖥️ How It Works
 
-Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
+- **3D Effects:** The site uses Three.js to render both the starfield and crystal shards. Mouse movement creates parallax and interactive effects.
+- **Animations:** GSAP powers smooth transitions, fades, and entrance animations for UI elements.
+- **Responsiveness:** Tailwind CSS ensures the site looks great on all devices. The navigation adapts for mobile and desktop.
+- **Reactivity:** Svelte's reactivity and the Runed library manage state and effects efficiently.
 
-**Why include `.vscode/extensions.json`?**
+## 📦 Getting Started
 
-Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+2. **Run the development server:**
+   ```bash
+   npm run dev
+   ```
+3. **Build for production:**
+   ```bash
+   npm run build
+   ```
 
-**Why enable `allowJs` in the TS template?**
+## 🤖 Contributing
 
-While `allowJs: false` would indeed prevent the use of `.js` files in the project, it does not prevent the use of JavaScript syntax in `.svelte` files. In addition, it would force `checkJs: false`, bringing the worst of both worlds: not being able to guarantee the entire codebase is TypeScript, and also having worse typechecking for the existing JavaScript. In addition, there are valid use cases in which a mixed codebase may be relevant.
+Pull requests and suggestions are welcome! For major changes, please open an issue first to discuss what you'd like to change.
 
-**Why is HMR not preserving my local component state?**
+---
 
-HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/rixo/svelte-hmr#svelte-hmr).
-
-If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
-
-```ts
-// store.ts
-// An extremely simple external store
-import { writable } from 'svelte/store'
-export default writable(0)
-```
+**AGI:theBook** – Where AI meets imagination.
