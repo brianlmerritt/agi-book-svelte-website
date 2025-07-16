@@ -68,7 +68,7 @@
   <div bind:this={modalRef} class="feature-modal top-left-modal" style={`position:fixed; top:${navHeight}px; left:0; right:0; bottom:82px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
     <div style="margin:2rem auto 1rem auto; color:white; text-align:center;">
       <div style="font-size:2.2rem;">{feature.icon}</div>
-      <h2 style="font-size:2rem; margin:0.5rem 0 1.5rem 0;">Chapter 1<!--{feature.title}--></h2>
+      <h2 style="font-size:2rem; margin:0.5rem 0 1.5rem 0;">Chapter 1 (Draft)<!--{feature.title}--></h2>
     </div>
     <div class="chapter-content" style="flex:1; overflow-y:auto; color:white; max-width:75vw; margin:0 auto; padding:0 1rem 2rem 1rem; background:transparent;">
       {@html chapterHtml}

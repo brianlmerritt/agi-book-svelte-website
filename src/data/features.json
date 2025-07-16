@@ -1,7 +1,7 @@
 [
   {
     "corner": "top-left",
-    "title": "Read Chapter 1",
+    "title": "Read \nChapter 1",
     "description": "Chapter 1 - ChatGpt o3 version.",
     "icon": "🌌"
   },
@@ -19,7 +19,7 @@
   },
   {
     "corner": "bottom-right",
-    "title": "Buy AI Prompt Kit",
+    "title": "Buy AI \nPrompt Kit",
     "description": "Join a vibrant community of readers.",
     "icon": "👥"
   }

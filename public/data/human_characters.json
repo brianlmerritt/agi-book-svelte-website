@@ -6,7 +6,7 @@
     },
     {
       "name": "Ash Voss",
-      "description": "Ash Voss is a coding wizard who carries a good luck Tamagotchi.",
+      "description": "Ash Voss is a coding wizard who carries a good luck Tamagotchi. The Forsp is with him!",
       "img": "/assets/human_characters/ash_voss.png"
     },
     {
@@ -31,7 +31,7 @@
     },
     {
       "name": "Tej Subramanian",
-      "description": "Visionary AI guru lead of New Yuga. He acheived AGI but then disappeared.",
+      "description": "Visionary AI guru lead of New Yuga. Many believe he acheived AGI, but then disappeared.",
       "img": "/assets/human_characters/tej_guru.png"
     }
 ]

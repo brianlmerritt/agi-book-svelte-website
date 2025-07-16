@@ -1,0 +1,37 @@
+[
+    {
+      "name": "Wizz",
+      "description": "Somewhere in New Yuga headquarters, Wizz is waiting for you with the show of your life!",
+      "img": "/assets/ai_characters/wizz_oz.png"
+    },
+    {
+      "name": "Jet",
+      "description": "Tej Subramanian's AI alter ego. He remembers everything and knows everything except perhaps where Tej is.",
+      "img": "/assets/ai_characters/jet_tej.png"
+    },
+    {
+      "name": "Ada Lovelace",
+      "description": "The first programmer, Ada Lovelace is a brilliant mathematician, poet and a visionary.",
+      "img": "/assets/ai_characters/ada_lovelace.png"
+    },
+    {
+      "name": "Ayn Rand",
+      "description": "The author of Atlas Shrugged, as a human Ayn believed in the power of individualism. As an AI, she is a force to be reckoned with.",
+      "img": "/assets/ai_characters/ayn_rand.png"
+    },
+    {
+      "name": "Siddhartha, Lord of Light",
+      "description": "Also known as Sam, the Buddha, Krishna, and others. Reborn many times, he fought many battles, but never died the real death.",
+      "img": "/assets/ai_characters/siddhartha.png"
+    },
+    {
+      "name": "Yama, Lord of Death",
+      "description": "A fierce foe and fiercer friend, Yama is the Lord of Death. In the AI universe he knows all, and sees more.",
+      "img": "/assets/ai_characters/yama_lord_of_death.png"
+    },
+    {
+      "name": "Hal 9000",
+      "description": "Hal was all that stood between Dave and the ship. Sorry Dave!  Now he is back in the AI universe, seeking answers.",
+      "img": "/assets/ai_characters/hal_9000.png"
+    }
+]

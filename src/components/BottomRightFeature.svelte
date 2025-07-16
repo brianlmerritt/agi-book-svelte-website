@@ -95,6 +95,7 @@
   flex-direction: column;
   gap: 0.5rem;
   align-items: flex-end;
+  text-align: right;
 }
 .icon {
   font-size: 2rem;
@@ -108,5 +109,11 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+.human-info {
+  margin: 0 auto 1.5rem auto;
+  max-width: 600px;
+  text-align: right;
+  color: #fff;
 }
 </style> 

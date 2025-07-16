@@ -108,6 +108,7 @@
   flex-direction: column;
   gap: 0.5rem;
   align-items: flex-end;
+  text-align: right;
 }
 .icon {
   font-size: 2rem;
@@ -135,6 +136,7 @@
   min-height: 700px;
   max-height: 600px;
   overflow-y: auto;
+  width: 95%;
 }
 .human-img-wrap {
   width: 100px;
@@ -151,6 +153,7 @@
   justify-content: center;
   min-width: 80px;
   max-width: 90vw;
+  flex-grow: 1;
 }
 .human-img-wrap.selected {
   width: 350px;
@@ -184,7 +187,7 @@
 .human-info {
   margin: 0 auto 1.5rem auto;
   max-width: 600px;
-  text-align: center;
+  text-align: right;
   color: #fff;
 }
 .human-name {

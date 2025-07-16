@@ -52,10 +52,10 @@
 <!-- Top features: z-index 30 (below nav) -->
 <div style="position:fixed; inset:0; pointer-events:none; z-index:30;">
   {#if topLeft}
-    <TopLeftFeature feature={topLeft} layout="top" openModal={openModal} setOpenModal={setOpenModal} />
+    <TopLeftFeature feature={topLeft} layout="top" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
   {/if}
   {#if topRight}
-    <TopRightFeature feature={topRight} layout="top" openModal={openModal} setOpenModal={setOpenModal} />
+    <TopRightFeature feature={topRight} layout="top" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
   {/if}
 </div>
 
@@ -63,10 +63,10 @@
 {#if openModal !== 'top-left' && openModal !== 'top-right'}
   <div style="position:fixed; inset:0; pointer-events:none; z-index:70;">
     {#if bottomLeft}
-      <BottomLeftFeature feature={bottomLeft} layout="bottom" openModal={openModal} setOpenModal={setOpenModal} />
+      <BottomLeftFeature feature={bottomLeft} layout="bottom" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
     {/if}
     {#if bottomRight}
-      <BottomRightFeature feature={bottomRight} layout="bottom" openModal={openModal} setOpenModal={setOpenModal} />
+      <BottomRightFeature feature={bottomRight} layout="bottom" openModal={openModal} setOpenModal={setOpenModal as (corner: string | null) => void} />
     {/if}
   </div>
 {/if}
@@ -83,7 +83,7 @@
             <div class="relative z-10">
               <div class="text-5xl mb-4">{feature.icon}</div>
               <h3 class="text-2xl font-space font-bold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-star-white to-nebula-pink">
-                {feature.title}
+                {@html feature.title.replace(/\n/g, '<br>')}
               </h3>
               <p class="text-gray-300 leading-relaxed">
                 {feature.description}

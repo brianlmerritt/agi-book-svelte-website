@@ -16,6 +16,11 @@
   let modalRef: HTMLDivElement | undefined;
   const motdHeight = 82; // px
 
+  // AI Characters data
+  type AICharacter = { name: string; description: string; img: string; };
+  let aiCharacters = $state<AICharacter[]>([]);
+  let selectedIdx = $state<number>(0);
+
   function open() {
     setOpenModal('bottom-left');
     expanded = false;
@@ -34,6 +39,13 @@
   $effect(() => {
     if (openModal === 'bottom-left' && modalRef) {
       gsap.fromTo(modalRef, { x: '-100%', y: '100%', opacity: 0 }, { x: '0%', y: '0%', opacity: 1, duration: 0.5, ease: 'power2.out' });
+    }
+  });
+  $effect(() => {
+    if (openModal === 'bottom-left' && aiCharacters.length === 0) {
+      fetch('/data/ai_characters.json')
+        .then(r => r.json())
+        .then((data: AICharacter[]) => { aiCharacters = data; selectedIdx = 0; });
     }
   });
 </script>
@@ -60,19 +72,25 @@
 </div>
 
 {#if openModal === 'bottom-left'}
-  <div bind:this={modalRef} class="feature-modal bottom-left-modal" style={`position:fixed; top:72px; left:0; right:0; bottom:82px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
-    <button class="close-btn" style="position:absolute; bottom:1.5rem; left:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
-    <div class="modal-content" style="margin:auto; color:white; text-align:center;">
-      {#if layout === 'bottom'}
-        <div style="font-size:3rem;">{feature.icon}</div>
-        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
-      {:else}
-        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
-        <div style="font-size:3rem;">{feature.icon}</div>
-      {/if}
-      <p style="font-size:1.2rem;">{feature.description}</p>
-      <div style="margin-top:2rem;">(Filler modal content)</div>
+  <div bind:this={modalRef} class="feature-modal bottom-left-modal" style={`position:fixed; top:72px; left:0; right:0; bottom:82px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; align-items:center; pointer-events:auto; max-width:90vw; margin:0 auto;`} role="dialog" aria-modal="true">
+    <div style="margin:2rem auto 1rem auto; color:white; text-align:center;">
+      <div style="font-size:2.2rem;">{feature.icon}</div>
+      <h2 style="font-size:2rem; margin:0.5rem 0 1.5rem 0;">Meet the AIs</h2>
     </div>
+    <div class="ais-row">
+      {#each aiCharacters as ai, idx}
+        <div class="ai-img-wrap {selectedIdx === idx ? 'selected' : ''}" onclick={() => selectedIdx = idx} tabindex="0" aria-label={ai.name}>
+          <img src={ai.img} alt={ai.name} class="ai-img" />
+        </div>
+      {/each}
+    </div>
+    {#if aiCharacters[selectedIdx]}
+      <div class="ai-info">
+        <div class="ai-name">{aiCharacters[selectedIdx].name}</div>
+        <div class="ai-desc">{aiCharacters[selectedIdx].description}</div>
+      </div>
+    {/if}
+    <button class="close-btn" style="position:absolute; top:1.5rem; right:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
   </div>
 {/if}
 
@@ -108,5 +126,83 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+.ais-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 1.2rem;
+  margin: 0 auto 1.2rem auto;
+  padding: 0.5rem 0;
+  max-width: 100%;
+  overflow-x: auto;
+  min-height: 700px;
+  max-height: 600px;
+  overflow-y: auto;
+  width: 95%;
+}
+.ai-img-wrap {
+  width: 100px;
+  height: 700px;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: #18122b;
+  box-shadow: 0 2px 12px #0006;
+  transition: width 0.45s cubic-bezier(.7,.2,.2,1), box-shadow 0.3s, border 0.3s;
+  border: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  max-width: 90vw;
+  flex-grow: 1;
+}
+.ai-img-wrap.selected {
+  width: 350px;
+  box-shadow: 0 4px 24px #ec4899cc, 0 2px 12px #0008;
+  border: 2px solid #ec4899;
+  z-index: 2;
+}
+@media (max-width: 900px) {
+  .ai-img-wrap {
+    height: 50vw;
+    min-height: 220px;
+    max-height: 70vw;
+  }
+  .ai-img-wrap.selected {
+    width: 60vw;
+    min-width: 180px;
+    max-width: 90vw;
+  }
+}
+.ai-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: filter 0.3s;
+  display: block;
+}
+.ai-img-wrap:not(.selected) .ai-img {
+  filter: grayscale(0.3) brightness(0.8);
+}
+.ai-info {
+  margin: 0 auto 1.5rem auto;
+  max-width: 600px;
+  text-align: left;
+  color: #fff;
+}
+.ai-name {
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: #e0c3fc;
+  margin-bottom: 0.5rem;
+}
+.ai-desc {
+  font-size: 1.08rem;
+  color: #fff;
+  line-height: 1.6;
 }
 </style> 
