@@ -24,6 +24,40 @@
 	
 	let isInitialized = $state(false);
 	
+	// Simulated eye movement - separate effect that updates mouseX/mouseY
+	$effect(() => {
+		if (controlMode === 'mouse') {
+			let animationFrame: number;
+			let time = 0;
+			
+			const simulateMovement = () => {
+				time += 0.02;
+				
+				// Create smooth figure-8 pattern with some randomness
+				const baseX = Math.sin(time * 0.7) * 0.5;
+				const baseY = Math.sin(time * 0.5) * Math.cos(time * 0.3) * 0.3;
+				
+				// Add slight random movement
+				const noiseX = Math.sin(time * 3.2) * 0.1;
+				const noiseY = Math.cos(time * 2.8) * 0.1;
+				
+				// Update reactive state - these will be read by the animation loop
+				mouseX = baseX + noiseX;
+				mouseY = baseY + noiseY;
+				
+				animationFrame = requestAnimationFrame(simulateMovement);
+			};
+			
+			simulateMovement();
+			
+			return () => {
+				if (animationFrame) {
+					cancelAnimationFrame(animationFrame);
+				}
+			};
+		}
+	});
+	
 	$effect(() => {
 		if (!canvas || isInitialized) return;
 		
