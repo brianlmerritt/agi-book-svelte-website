@@ -7,34 +7,34 @@
 	import MotdBanner from './components/MotdBanner.svelte';
 	import { gsap } from 'gsap';
 	
-	// Import the new Starfield component
+	// Import the background and foreground components
 	import Starfield from './components/Starfield.svelte';
+	import Shards from './components/Shards.svelte';
 
 	// Track if the app has mounted for better control
 	let isMounted = $state(false);
 	
-	// Control mode for the Hero component - change this to switch modes
-	let eyeControlMode: 'mouse' | 'manual' = 'mouse'; // Change to 'manual' for debugging
+	// Control mode for the Hero component
+	let eyeControlMode: 'mouse' | 'manual' = 'mouse';
 	
-	// Use $effect instead of onMount for side effects
 	$effect(() => {
 		if (!isMounted) { // Only run once
-			// Initial page animation
 			gsap.from('body', {
 				opacity: 0,
 				duration: 1,
 				ease: "power2.inOut"
 			});
-			
 			isMounted = true;
 		}
 	});
 </script>
 
-<!-- The main container now has a transparent background -->
 <main class="min-h-screen overflow-hidden bg-transparent">
-	<!-- The Starfield component renders the background -->
+	<!-- The Starfield component renders the deep background -->
 	<Starfield />
+	
+	<!-- The Shards component renders in front of the page content -->
+	<Shards />
 
 	<!-- Navigation -->
 	<Nav />
@@ -61,7 +61,6 @@
 	}
 	
 	:global(body) {
-		/* Set the base background color here, which will be visible behind the canvas */
 		background-color: #0a0e27;
 		overflow-x: hidden;
 	}
@@ -70,7 +69,6 @@
 		box-sizing: border-box;
 	}
 
-	/* Make sections transparent so the starfield can be seen */
 	:global(section) {
 		background-color: transparent !important;
 	}
