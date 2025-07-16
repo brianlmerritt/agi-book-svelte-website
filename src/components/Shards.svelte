@@ -251,6 +251,10 @@
                 if (distanceToMouse < evasionRadius) {
                     const repulsionForce = new THREE.Vector3().subVectors(crystal.mesh.position, mousePos3D).normalize();
                     repulsionForce.multiplyScalar((evasionRadius - distanceToMouse) * 0.016);
+                    
+                    // Prevent mouse from pushing crystals along the Z axis
+                    repulsionForce.z = 0;
+
                     crystal.velocity.add(repulsionForce);
                 }
 
