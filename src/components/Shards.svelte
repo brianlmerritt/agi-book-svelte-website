@@ -53,7 +53,7 @@
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 		// --- CRYSTAL SHARD GENERATION ---
-		const crystals: { mesh: any; velocity: any; stuckTime: number; lastPosition: any; respawnTimer: number }[] = [];
+		const crystals: { mesh: any; velocity: any; stuckTime: number; lastPosition: any; respawnTimer: number; isTransitioning: boolean }[] = [];
 		const bounds = { x: 50, y: 25, z: 30 };
 
 		const createCrystal = (geometry: any, color: any, opacity: number) => {
@@ -91,7 +91,8 @@
 				velocity, 
 				stuckTime: 0,
 				lastPosition: mesh.position.clone(),
-				respawnTimer: Math.random() * 600 + 800 // Random respawn time between 800-1400 frames (13-23 seconds)
+				respawnTimer: Math.random() * 600 + 800, // Random respawn time between 800-1400 frames (13-23 seconds)
+				isTransitioning: false
 			});
 		};
 
@@ -139,6 +140,9 @@
 
 		// Function to respawn a crystal with fade transition
 		const respawnCrystal = (crystal: any, index: number) => {
+			// Mark as transitioning to pause physics
+			crystal.isTransitioning = true;
+			
 			// Fade out
 			gsap.to(crystal.mesh.material, {
 				opacity: 0,
@@ -167,7 +171,11 @@
 								crystal.mesh.material.color.getHex() === 0x00ff00 ? 0.9 :
 								crystal.mesh.material.color.getHex() === 0xffd700 ? 0.9 : 0.85,
 						duration: 1.2,
-						ease: 'power2.out'
+						ease: 'power2.out',
+						onComplete: () => {
+							// Re-enable physics after fade-in completes
+							crystal.isTransitioning = false;
+						}
 					});
 				}
 			});
@@ -178,6 +186,15 @@
 			animationFrameId = requestAnimationFrame(animate);
 
 			crystals.forEach((crystal, index) => {
+				// Skip physics updates if transitioning
+				if (crystal.isTransitioning) {
+					// Only allow rotation during transition
+					crystal.mesh.rotation.x += 0.003;
+					crystal.mesh.rotation.y += 0.004;
+					crystal.mesh.rotation.z += 0.002;
+					return;
+				}
+
 				// Check if crystal has moved significantly
 				const distanceMoved = crystal.mesh.position.distanceTo(crystal.lastPosition);
 				if (distanceMoved < 0.1) {
@@ -233,7 +250,7 @@
 				// Collision detection between crystals
 				const collisionRadius = 2.5;
 				crystals.forEach((otherCrystal, otherIndex) => {
-					if (index !== otherIndex) {
+					if (index !== otherIndex && !otherCrystal.isTransitioning) {
 						const distance = crystal.mesh.position.distanceTo(otherCrystal.mesh.position);
 						if (distance < collisionRadius) {
 							// Calculate repulsion force
