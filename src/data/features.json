@@ -1,25 +1,25 @@
 [
   {
     "corner": "top-left",
-    "title": "Immersive World",
-    "description": "Explore a universe where AI awakens.",
+    "title": "Read Chapter 1",
+    "description": "Chapter 1 - ChatGpt o3 version.",
     "icon": "🌌"
   },
   {
     "corner": "top-right",
-    "title": "AI Narrative",
-    "description": "A story crafted by advanced AI.",
+    "title": "Meet the Humans",
+    "description": "The human characters of AGI:theBook.",
     "icon": "🤖"
   },
   {
     "corner": "bottom-left",
-    "title": "Interactive Prompts",
+    "title": "Meet the AIs",
     "description": "Shape the narrative with your input.",
     "icon": "💫"
   },
   {
     "corner": "bottom-right",
-    "title": "Community",
+    "title": "Buy AI Prompt Kit",
     "description": "Join a vibrant community of readers.",
     "icon": "👥"
   }

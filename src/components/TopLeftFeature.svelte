@@ -16,6 +16,8 @@
   let modalRef: HTMLDivElement | undefined;
   const navHeight = 72; // px
 
+  let chapterHtml = $state('');
+
   function open() {
     setOpenModal('top-left');
     expanded = false;
@@ -29,6 +31,14 @@
       gsap.to(triangleRef, { scale: 1.15, duration: 0.3, ease: 'power2.out' });
     } else if (triangleRef) {
       gsap.to(triangleRef, { scale: 1, duration: 0.3, ease: 'power2.out' });
+    }
+  });
+  $effect(() => {
+    if (openModal === 'top-left') {
+      (async () => {
+        const res = await fetch('/data/chapter1.html');
+        chapterHtml = await res.text();
+      })();
     }
   });
   $effect(() => {
@@ -49,30 +59,21 @@
   aria-label={feature.title}
 >
   <div class="feature-content">
-    {#if layout === 'top'}
-      <span class="title">{feature.title}</span>
-      <span class="icon">{feature.icon}</span>
-    {:else}
-      <span class="icon">{feature.icon}</span>
-      <span class="title">{feature.title}</span>
-    {/if}
+    <span class="title">{feature.title}</span>
+    <span class="icon">{feature.icon}</span>
   </div>
 </div>
 
 {#if openModal === 'top-left'}
   <div bind:this={modalRef} class="feature-modal top-left-modal" style={`position:fixed; top:${navHeight}px; left:0; right:0; bottom:82px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
-    <button class="close-btn" style="position:absolute; top:1.5rem; left:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
-    <div class="modal-content" style="margin:auto; color:white; text-align:center;">
-      {#if layout === 'top'}
-        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
-        <div style="font-size:3rem;">{feature.icon}</div>
-      {:else}
-        <div style="font-size:3rem;">{feature.icon}</div>
-        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
-      {/if}
-      <p style="font-size:1.2rem;">{feature.description}</p>
-      <div style="margin-top:2rem;">(Filler modal content)</div>
+    <div style="margin:2rem auto 1rem auto; color:white; text-align:center;">
+      <div style="font-size:2.2rem;">{feature.icon}</div>
+      <h2 style="font-size:2rem; margin:0.5rem 0 1.5rem 0;">Chapter 1<!--{feature.title}--></h2>
     </div>
+    <div class="chapter-content" style="flex:1; overflow-y:auto; color:white; max-width:75vw; margin:0 auto; padding:0 1rem 2rem 1rem; background:transparent;">
+      {@html chapterHtml}
+    </div>
+    <button class="close-btn" style="position:absolute; top:1.5rem; left:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
   </div>
 {/if}
 
@@ -104,6 +105,28 @@
 }
 .feature-modal.top-left-modal {
   animation: fadeIn 0.5s;
+}
+:global(.chapter-content) {
+  max-width: 75vw;
+}
+:global(.chapter-content h2) {
+  font-size: 2rem;
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  color: #e0c3fc;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+}
+:global(.chapter-content p) {
+  font-size: 1.05rem;
+  color: #fff;
+  margin-bottom: 0.5em;
+  line-height: 1.7;
+}
+:global(.chapter-content i),
+:global(.chapter-content em) {
+  font-style: italic;
+  color: #f9a8d4;
 }
 @keyframes fadeIn {
   from { opacity: 0; }
