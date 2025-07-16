@@ -8,6 +8,17 @@ export default defineConfig({
     svelte(),
     tailwindcss()
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'three': ['three'],
+          'gsap': ['gsap'],
+          'runed': ['runed']
+        }
+      }
+    }
+  },
   optimizeDeps: {
     include: ['gsap', 'three', 'runed']
   },

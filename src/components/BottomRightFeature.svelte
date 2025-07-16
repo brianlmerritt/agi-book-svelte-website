@@ -13,7 +13,7 @@
   } = $props();
   let expanded = $state(false);
   let triangleRef: HTMLDivElement | undefined;
-  let modalRef: HTMLDivElement | undefined;
+  let modalRef = $state<HTMLDivElement | undefined>(undefined);
   const motdHeight = 82; // px
 
   function open() {
@@ -22,6 +22,13 @@
   }
   function close() {
     setOpenModal(null);
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
   }
 
   $effect(() => {
@@ -41,10 +48,12 @@
 <div
   bind:this={triangleRef}
   class="feature-triangle bottom-right"
+  role="button"
   tabindex="0"
   onmouseenter={() => expanded = true}
   onmouseleave={() => expanded = false}
   onclick={open}
+  onkeydown={handleKeyDown}
   style={`position:fixed; bottom:${motdHeight}px; right:0; width:250px; height:250px; z-index:30; cursor:pointer; pointer-events:auto;`}
   aria-label={feature.title}
 >
@@ -109,11 +118,5 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
-}
-.human-info {
-  margin: 0 auto 1.5rem auto;
-  max-width: 600px;
-  text-align: right;
-  color: #fff;
 }
 </style> 

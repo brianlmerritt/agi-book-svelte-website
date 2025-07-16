@@ -13,7 +13,7 @@
   } = $props();
   let expanded = $state(false);
   let triangleRef: HTMLDivElement | undefined;
-  let modalRef: HTMLDivElement | undefined;
+  let modalRef = $state<HTMLDivElement | undefined>(undefined);
   const navHeight = 72; // px
 
   let chapterHtml = $state('');
@@ -24,6 +24,13 @@
   }
   function close() {
     setOpenModal(null);
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
   }
 
   $effect(() => {
@@ -51,10 +58,12 @@
 <div
   bind:this={triangleRef}
   class="feature-triangle top-left"
+  role="button"
   tabindex="0"
   onmouseenter={() => expanded = true}
   onmouseleave={() => expanded = false}
   onclick={open}
+  onkeydown={handleKeyDown}
   style={`position:fixed; top:${navHeight}px; left:0; width:250px; height:250px; z-index:30; cursor:pointer; pointer-events:auto;`}
   aria-label={feature.title}
 >

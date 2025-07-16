@@ -13,7 +13,7 @@
   } = $props();
   let expanded = $state(false);
   let triangleRef: HTMLDivElement | undefined;
-  let modalRef: HTMLDivElement | undefined;
+  let modalRef = $state<HTMLDivElement | undefined>(undefined);
   const navHeight = 72; // px
 
   // Humans data
@@ -27,6 +27,20 @@
   }
   function close() {
     setOpenModal(null);
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
+  }
+
+  function handleHumanKeyDown(e: KeyboardEvent, idx: number) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      selectedIdx = idx;
+    }
   }
 
   $effect(() => {
@@ -53,10 +67,12 @@
 <div
   bind:this={triangleRef}
   class="feature-triangle top-right"
+  role="button"
   tabindex="0"
   onmouseenter={() => expanded = true}
   onmouseleave={() => expanded = false}
   onclick={open}
+  onkeydown={handleKeyDown}
   style={`position:fixed; top:${navHeight}px; right:0; width:250px; height:250px; z-index:30; cursor:pointer; pointer-events:auto;`}
   aria-label={feature.title}
 >
@@ -74,7 +90,7 @@
     </div>
     <div class="humans-row">
       {#each humans as human, idx}
-        <div class="human-img-wrap {selectedIdx === idx ? 'selected' : ''}" onclick={() => selectedIdx = idx} tabindex="0" aria-label={human.name}>
+        <div class="human-img-wrap {selectedIdx === idx ? 'selected' : ''}" role="button" tabindex="0" onclick={() => selectedIdx = idx} onkeydown={(e) => handleHumanKeyDown(e, idx)} aria-label={human.name}>
           <img src={human.img} alt={human.name} class="human-img" />
         </div>
       {/each}

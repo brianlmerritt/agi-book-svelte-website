@@ -13,7 +13,7 @@
   } = $props();
   let expanded = $state(false);
   let triangleRef: HTMLDivElement | undefined;
-  let modalRef: HTMLDivElement | undefined;
+  let modalRef = $state<HTMLDivElement | undefined>(undefined);
   const motdHeight = 82; // px
 
   // AI Characters data
@@ -27,6 +27,20 @@
   }
   function close() {
     setOpenModal(null);
+  }
+
+  function handleKeyDown(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      open();
+    }
+  }
+
+  function handleAIKeyDown(e: KeyboardEvent, idx: number) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      selectedIdx = idx;
+    }
   }
 
   $effect(() => {
@@ -53,10 +67,12 @@
 <div
   bind:this={triangleRef}
   class="feature-triangle bottom-left"
+  role="button"
   tabindex="0"
   onmouseenter={() => expanded = true}
   onmouseleave={() => expanded = false}
   onclick={open}
+  onkeydown={handleKeyDown}
   style={`position:fixed; bottom:${motdHeight}px; left:0; width:250px; height:250px; z-index:30; cursor:pointer; pointer-events:auto;`}
   aria-label={feature.title}
 >
@@ -79,7 +95,7 @@
     </div>
     <div class="ais-row">
       {#each aiCharacters as ai, idx}
-        <div class="ai-img-wrap {selectedIdx === idx ? 'selected' : ''}" onclick={() => selectedIdx = idx} tabindex="0" aria-label={ai.name}>
+        <div class="ai-img-wrap {selectedIdx === idx ? 'selected' : ''}" role="button" tabindex="0" onclick={() => selectedIdx = idx} onkeydown={(e) => handleAIKeyDown(e, idx)} aria-label={ai.name}>
           <img src={ai.img} alt={ai.name} class="ai-img" />
         </div>
       {/each}

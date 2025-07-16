@@ -4,7 +4,6 @@
     
     let mobileMenuOpen = $state(false);
     const mobileQuery = new MediaQuery('(max-width: 768px)');
-    let showCenterModal = $state(false);
 
     function resetPage() {
       window.location.reload();
@@ -15,28 +14,24 @@
     }
 </script>
 
-<script context="module">
-  let showCenterModal = false;
-</script>
-  
   <nav role="region" class="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-nebula-pink/90 to-cosmic-purple/90 backdrop-blur-md border-b border-star-white/20">
     <div class="container mx-auto px-4 py-4">
       <div class="flex items-center justify-between">
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <div class="w-10 h-10 bg-gradient-to-r from-cosmic-purple to-nebula-pink rounded-full animate-pulse"></div>
-          <h1 class="text-2xl font-bold font-space text-white bg-clip-text bg-gradient-to-r from-white via-cosmic-purple/60 to-nebula-pink/60 cursor-pointer" role="button" tabindex="0" onclick={resetPage} aria-label="Reset page">
+          <button class="text-2xl font-bold font-space text-white bg-clip-text bg-gradient-to-r from-white via-cosmic-purple/60 to-nebula-pink/60 cursor-pointer bg-transparent border-none" onclick={resetPage} onkeydown={(e) => e.key === 'Enter' && resetPage()} aria-label="Reset page">
             AGI:theBook
-          </h1>
+          </button>
         </div>
         
         <!-- Desktop Menu -->
         {#if !mobileQuery.current}
           <div class="flex items-center space-x-6">
-            <a href="#read" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</a>
-            <a href="#buy" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-right')}>Meet the Humans</a>
-            <a href="#characters" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</a>
-            <a href="#community" class="hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</a>
+            <button class="hover:text-nebula-pink transition-colors bg-transparent border-none text-white" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</button>
+            <button class="hover:text-nebula-pink transition-colors bg-transparent border-none text-white" onclick={() => openFeatureModal('top-right')}>Meet the Humans</button>
+            <button class="hover:text-nebula-pink transition-colors bg-transparent border-none text-white" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</button>
+            <button class="hover:text-nebula-pink transition-colors bg-transparent border-none text-white" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</button>
             <button
               class="w-10 h-10 rounded-full bg-gradient-to-r from-cosmic-purple to-nebula-pink p-0.5"
               aria-label="Open menu"
@@ -68,10 +63,10 @@
       <!-- Mobile Menu -->
       {#if mobileQuery.current && mobileMenuOpen}
         <div class="mt-4 pt-4 border-t border-cosmic-purple/20 space-y-3">
-          <a href="#read" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</a>
-          <a href="#buy" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('top-right')}>Meet the Humans</a>
-          <a href="#characters" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</a>
-          <a href="#community" class="block hover:text-nebula-pink transition-colors" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</a>
+          <button class="block hover:text-nebula-pink transition-colors bg-transparent border-none text-white text-left" onclick={() => openFeatureModal('top-left')}>Read Chapter 1</button>
+          <button class="block hover:text-nebula-pink transition-colors bg-transparent border-none text-white text-left" onclick={() => openFeatureModal('top-right')}>Meet the Humans</button>
+          <button class="block hover:text-nebula-pink transition-colors bg-transparent border-none text-white text-left" onclick={() => openFeatureModal('bottom-left')}>Meet the AI Characters</button>
+          <button class="block hover:text-nebula-pink transition-colors bg-transparent border-none text-white text-left" onclick={() => openFeatureModal('bottom-right')}>Buy the AI Prompt Kit</button>
         </div>
       {/if}
     </div>
