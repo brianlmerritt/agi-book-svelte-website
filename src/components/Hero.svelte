@@ -13,6 +13,7 @@
 	let rotationY = $state(0);
 	let rotationZ = $state(0);
 	let textureZoom = $state(1);
+	let aspectRatio = $state(1);
 	
 	let isInitialized = $state(false);
 	
@@ -56,7 +57,9 @@
 				time: { value: 0 },
 				eyeTexture: { value: eyeTexture },
 				// Uniform for controlling texture scale from the slider
-				textureZoom: { value: 1.0 }
+				textureZoom: { value: 1.0 },
+				// NEW: Uniform for controlling aspect ratio correction
+				aspectRatio: { value: 1.0 }
 			},
 			vertexShader: `
 				varying vec2 vUv;
@@ -81,10 +84,15 @@
 				uniform float time;
 				uniform sampler2D eyeTexture;
 				uniform float textureZoom;
+				uniform float aspectRatio;
 				
 				void main() {
-					// Center UVs, apply zoom, then shift back
-					vec2 zoomedUv = (vUv - 0.5) * textureZoom + 0.5;
+					// Center UVs and apply aspect ratio correction first
+					vec2 correctedUv = vUv;
+					correctedUv.x = (correctedUv.x - 0.5) * aspectRatio + 0.5;
+					
+					// Then apply zoom from the corrected coordinates
+					vec2 zoomedUv = (correctedUv - 0.5) * textureZoom + 0.5;
 					
 					vec3 finalColor;
 					float finalAlpha = 1.0;
@@ -156,6 +164,7 @@
                 iris.rotation.y = Number(rotationY);
                 iris.rotation.z = Number(rotationZ);
 				eyeballMaterial.uniforms.textureZoom.value = Number(textureZoom);
+				eyeballMaterial.uniforms.aspectRatio.value = Number(aspectRatio);
             }
 			
 			renderer.render(scene, camera);
@@ -233,5 +242,13 @@
 			<span>{Number(textureZoom).toFixed(2)}</span>
 		</div>
 		<input type="range" id="zoom" bind:value={textureZoom} min="0.1" max="5" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
+	</div>
+	<!-- NEW: Aspect Ratio Slider -->
+	<div>
+		<div class="flex justify-between">
+			<label for="aspect">Aspect Ratio</label>
+			<span>{Number(aspectRatio).toFixed(2)}</span>
+		</div>
+		<input type="range" id="aspect" bind:value={aspectRatio} min="0.1" max="2.0" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
 	</div>
 </div>
