@@ -7,8 +7,7 @@
 	// Reactive state for the raw mouse position
 	let mousePosition = $state({ x: 0, y: 0 });
 
-	// FIX: A plain object to hold the interpolated (smoothed) mouse position.
-	// GSAP will animate this object's properties.
+	// A plain object to hold the interpolated (smoothed) mouse position.
 	const smoothedMouse = { x: 0, y: 0 };
 
 	// This effect manages the mousemove event listener.
@@ -23,13 +22,13 @@
 		};
 	});
 
-	// FIX: This new effect watches for changes in the raw mouse position
+	// This effect watches for changes in the raw mouse position
 	// and triggers a smooth animation on the 'smoothedMouse' object.
 	$effect(() => {
 		gsap.to(smoothedMouse, {
 			x: mousePosition.x,
 			y: mousePosition.y,
-			duration: 0.5, // Controls how quickly the "smoothed" mouse catches up
+			duration: 0.5,
 			ease: 'power2.out',
 		});
 	});
@@ -113,21 +112,54 @@
 			animationFrameId = requestAnimationFrame(animate);
 
 			crystals.forEach(crystal => {
-				// FIX: Use the 'smoothedMouse' position for all physics calculations.
-				const mouse3D = new THREE.Vector3(smoothedMouse.x * (bounds.x / 2), smoothedMouse.y * (bounds.y / 2), 0);
-				const distanceToMouse = crystal.mesh.position.distanceTo(mouse3D);
+				const mousePos2D = new THREE.Vector2(smoothedMouse.x * (bounds.x / 2), smoothedMouse.y * (bounds.y / 2));
+				const crystalPos2D = new THREE.Vector2(crystal.mesh.position.x, crystal.mesh.position.y);
+				const distanceToMouse = crystalPos2D.distanceTo(mousePos2D);
 				
-				if (distanceToMouse < 5) {
-					const repulsionForce = new THREE.Vector3().subVectors(crystal.mesh.position, mouse3D).normalize();
-					repulsionForce.multiplyScalar((5 - distanceToMouse) * 0.008);
+				const evasionRadius = 7;
+				if (distanceToMouse < evasionRadius) {
+					const repulsionForce = new THREE.Vector3().subVectors(
+						new THREE.Vector3(crystal.mesh.position.x, crystal.mesh.position.y, 0), 
+						new THREE.Vector3(mousePos2D.x, mousePos2D.y, 0)
+					).normalize();
+					
+					repulsionForce.multiplyScalar((evasionRadius - distanceToMouse) * 0.016);
 					crystal.velocity.add(repulsionForce);
+				}
+
+				crystal.velocity.multiplyScalar(0.98);
+
+				const maxSpeed = 0.1;
+				if (crystal.velocity.length() > maxSpeed) {
+					crystal.velocity.normalize().multiplyScalar(maxSpeed);
 				}
 
 				crystal.mesh.position.add(crystal.velocity);
 
-				if (Math.abs(crystal.mesh.position.x) > bounds.x / 2) crystal.velocity.x *= -1;
-				if (Math.abs(crystal.mesh.position.y) > bounds.y / 2) crystal.velocity.y *= -1;
-				if (Math.abs(crystal.mesh.position.z) > bounds.z / 2) crystal.velocity.z *= -1;
+				// FIX: More robust wall bouncing with position clamping to prevent "tunneling".
+				if (crystal.mesh.position.x > bounds.x / 2) {
+					crystal.mesh.position.x = bounds.x / 2;
+					crystal.velocity.x *= -1;
+				} else if (crystal.mesh.position.x < -bounds.x / 2) {
+					crystal.mesh.position.x = -bounds.x / 2;
+					crystal.velocity.x *= -1;
+				}
+
+				if (crystal.mesh.position.y > bounds.y / 2) {
+					crystal.mesh.position.y = bounds.y / 2;
+					crystal.velocity.y *= -1;
+				} else if (crystal.mesh.position.y < -bounds.y / 2) {
+					crystal.mesh.position.y = -bounds.y / 2;
+					crystal.velocity.y *= -1;
+				}
+
+				if (crystal.mesh.position.z > bounds.z / 2) {
+					crystal.mesh.position.z = bounds.z / 2;
+					crystal.velocity.z *= -1;
+				} else if (crystal.mesh.position.z < -bounds.z / 2) {
+					crystal.mesh.position.z = -bounds.z / 2;
+					crystal.velocity.z *= -1;
+				}
 
 				crystal.mesh.rotation.x += 0.001;
 				crystal.mesh.rotation.y += 0.002;
