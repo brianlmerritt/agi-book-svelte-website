@@ -3,6 +3,10 @@
     
     let mobileMenuOpen = $state(false);
     const mobileQuery = new MediaQuery('(max-width: 768px)');
+
+    function resetPage() {
+      window.location.reload();
+    }
   </script>
   
   <nav role="region" class="fixed top-0 left-0 right-0 z-50 bg-space-blue/90 backdrop-blur-md border-b border-cosmic-purple/20">
@@ -11,7 +15,7 @@
         <!-- Logo -->
         <div class="flex items-center space-x-2">
           <div class="w-10 h-10 bg-gradient-to-r from-cosmic-purple to-nebula-pink rounded-full animate-pulse"></div>
-          <h1 class="text-2xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-cosmic-purple to-nebula-pink">
+          <h1 class="text-2xl font-bold font-space text-transparent bg-clip-text bg-gradient-to-r from-cosmic-purple to-nebula-pink cursor-pointer" role="button" tabindex="0" onclick={resetPage} aria-label="Reset page">
             AGI:theBook
           </h1>
         </div>

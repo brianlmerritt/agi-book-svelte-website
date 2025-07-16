@@ -1,17 +1,19 @@
 <script lang="ts">
   import { gsap } from 'gsap';
-  let { feature }: {
+  let { feature, layout }: {
     feature: {
       corner: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
       title: string;
       description: string;
       icon: string;
-    }
+    },
+    layout: 'top' | 'bottom'
   } = $props();
   let expanded = $state(false);
   let showModal = $state(false);
   let triangleRef: HTMLDivElement | undefined;
   let modalRef: HTMLDivElement | undefined;
+  const motdHeight = 72; // px
 
   function openModal() {
     showModal = true;
@@ -42,21 +44,31 @@
   onmouseenter={() => expanded = true}
   onmouseleave={() => expanded = false}
   onclick={openModal}
-  style="position:fixed; bottom:0; left:0; width:40vw; height:40vh; z-index:30; cursor:pointer; pointer-events:auto;"
+  style={`position:fixed; bottom:${motdHeight}px; left:0; width:250px; height:250px; z-index:30; cursor:pointer; pointer-events:auto;`}
   aria-label={feature.title}
 >
   <div class="feature-content">
-    <span class="icon">{feature.icon}</span>
-    <span class="title">{feature.title}</span>
+    {#if layout === 'bottom'}
+      <span class="icon">{feature.icon}</span>
+      <span class="title">{feature.title}</span>
+    {:else}
+      <span class="title">{feature.title}</span>
+      <span class="icon">{feature.icon}</span>
+    {/if}
   </div>
 </div>
 
 {#if showModal}
-  <div bind:this={modalRef} class="feature-modal bottom-left-modal" style="position:fixed; top:0; left:0; right:0; bottom:0; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;" role="dialog" aria-modal="true">
+  <div bind:this={modalRef} class="feature-modal bottom-left-modal" style={`position:fixed; top:0; left:0; right:0; bottom:${motdHeight}px; z-index:60; background:rgba(20,16,40,0.97); display:flex; flex-direction:column; pointer-events:auto;`} role="dialog" aria-modal="true">
     <button class="close-btn" style="position:absolute; bottom:1.5rem; left:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={closeModal} aria-label="Close">✕</button>
     <div class="modal-content" style="margin:auto; color:white; text-align:center;">
-      <div style="font-size:3rem;">{feature.icon}</div>
-      <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
+      {#if layout === 'bottom'}
+        <div style="font-size:3rem;">{feature.icon}</div>
+        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
+      {:else}
+        <h2 style="font-size:2rem; margin:1rem 0;">{feature.title}</h2>
+        <div style="font-size:3rem;">{feature.icon}</div>
+      {/if}
       <p style="font-size:1.2rem;">{feature.description}</p>
       <div style="margin-top:2rem;">(Filler modal content)</div>
     </div>
@@ -81,6 +93,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  align-items: flex-start;
 }
 .icon {
   font-size: 2rem;

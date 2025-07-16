@@ -44,19 +44,23 @@
     }
 </script>
 
-<!-- Overlay triangles, no scrolling -->
-<div style="position:fixed; inset:0; pointer-events:none; z-index:20;">
+<!-- Top features: z-index 30 (below nav) -->
+<div style="position:fixed; inset:0; pointer-events:none; z-index:30;">
   {#if topLeft}
-    <TopLeftFeature feature={topLeft} />
+    <TopLeftFeature feature={topLeft} layout="top" />
   {/if}
   {#if topRight}
-    <TopRightFeature feature={topRight} />
+    <TopRightFeature feature={topRight} layout="top" />
   {/if}
+</div>
+
+<!-- Bottom features: z-index 70 (above motd) -->
+<div style="position:fixed; inset:0; pointer-events:none; z-index:70;">
   {#if bottomLeft}
-    <BottomLeftFeature feature={bottomLeft} />
+    <BottomLeftFeature feature={bottomLeft} layout="bottom" />
   {/if}
   {#if bottomRight}
-    <BottomRightFeature feature={bottomRight} />
+    <BottomRightFeature feature={bottomRight} layout="bottom" />
   {/if}
 </div>
 
