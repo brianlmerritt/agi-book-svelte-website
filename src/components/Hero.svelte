@@ -1,6 +1,9 @@
 <script lang="ts">
 	import * as THREE from 'three';
 	
+	// Props from parent component
+	let { controlMode = 'mouse' }: { controlMode?: 'mouse' | 'manual' } = $props();
+	
 	let canvas: HTMLCanvasElement;
 	let scene: THREE.Scene;
 	let camera: THREE.PerspectiveCamera;
@@ -8,12 +11,16 @@
 	let iris: THREE.Mesh;
     let eyeballMaterial: THREE.ShaderMaterial;
 
-	// State variables for the debug sliders
+	// State variables for debug sliders (used when controlMode = 'manual')
 	let rotationX = $state(0);
-	let rotationY = $state(0);
+	let rotationY = $state(-1.57); // Default to center position
 	let rotationZ = $state(0);
-	let textureZoom = $state(1);
-	let aspectRatio = $state(1);
+	let textureZoom = $state(0.99);
+	let aspectRatio = $state(2.30);
+	
+	// Mouse tracking variables
+	let mouseX = $state(0);
+	let mouseY = $state(0);
 	
 	let isInitialized = $state(false);
 	
@@ -56,10 +63,8 @@
 			uniforms: {
 				time: { value: 0 },
 				eyeTexture: { value: eyeTexture },
-				// Uniform for controlling texture scale from the slider
-				textureZoom: { value: 1.0 },
-				// NEW: Uniform for controlling aspect ratio correction
-				aspectRatio: { value: 1.0 }
+				textureZoom: { value: 0.99 },
+				aspectRatio: { value: 2.30 }
 			},
 			vertexShader: `
 				varying vec2 vUv;
@@ -97,21 +102,23 @@
 					vec3 finalColor;
 					float finalAlpha = 1.0;
 					
-					// Define sclera (white part of eye) color
-					vec3 scleraColor = vec3(0.9, 0.9, 0.95);
-
-					// Check if the zoomed UV is within the texture's 0-1 range
-					if (zoomedUv.x > 1.0 || zoomedUv.x < 0.0 || zoomedUv.y > 1.0 || zoomedUv.y < 0.0) {
-						// Outside texture bounds - render sclera
-						finalColor = scleraColor;
-					} else {
-						// Inside bounds - sample texture and blend with sclera based on alpha
-						vec4 textureColor = texture2D(eyeTexture, zoomedUv);
-						
-						// OPTION 2: Proper alpha blending with sclera
-						// This respects PNG transparency and creates smooth transitions
-						finalColor = mix(scleraColor, textureColor.rgb, textureColor.a);
-					}
+					// CHANGED: Clamp UV coordinates to extend edge pixels outward
+					// This makes the edge colors of your iris stretch across the eyeball
+					vec2 clampedUv = clamp(zoomedUv, 0.0, 1.0);
+					
+					// Sample the texture with the clamped coordinates
+					vec4 textureColor = texture2D(eyeTexture, clampedUv);
+					
+					// Use the texture pattern with extended edges
+					finalColor = textureColor.rgb;
+					
+					// Add distance-based fade to create depth (optional - makes center more prominent)
+					vec2 center = vec2(0.5, 0.5);
+					float distFromCenter = distance(correctedUv, center);
+					float fadeOut = 1.0 - smoothstep(0.3, 0.8, distFromCenter);
+					
+					// Apply fade to make the pattern subtler towards edges (optional)
+					finalColor = mix(finalColor * 0.7, finalColor, fadeOut);
 					
 					// Add subtle shimmer over the whole eye surface
 					float shimmer = sin(vUv.x * 15.0 + time * 2.0) * sin(vUv.y * 15.0 - time * 1.5) * 0.02;
@@ -153,18 +160,45 @@
 		rimLight2.position.set(-3, -3, 3);
 		scene.add(rimLight2);
 		
+		// Mouse movement handler
+		const handleMouseMove = (e: MouseEvent) => {
+			if (controlMode === 'mouse') {
+				// Convert screen coordinates to normalized (-1 to +1)
+				mouseX = (e.clientX / window.innerWidth) * 2 - 1;
+				mouseY = -(e.clientY / window.innerHeight) * 2 + 1;
+			}
+		};
+		
+		window.addEventListener('mousemove', handleMouseMove);
+		
 		const animate = () => {
 			requestAnimationFrame(animate);
 			
 			eyeballMaterial.uniforms.time.value += 0.01;
 
             if (iris) {
-                // Apply rotation and zoom from sliders in every frame
-                iris.rotation.x = Number(rotationX);
-                iris.rotation.y = Number(rotationY);
-                iris.rotation.z = Number(rotationZ);
-				eyeballMaterial.uniforms.textureZoom.value = Number(textureZoom);
-				eyeballMaterial.uniforms.aspectRatio.value = Number(aspectRatio);
+				if (controlMode === 'mouse') {
+					// Convert mouse position to eye rotations using your calibrated values
+					const targetY = -1.57 + (mouseX * 0.2); // -1.72 to -1.32 range
+					const targetX = mouseY * 0.2; // -0.20 to +0.20 range
+					const targetZ = 0; // Always 0
+					
+					// Apply rotations directly (smooth with GSAP if desired)
+					iris.rotation.x = targetX;
+					iris.rotation.y = targetY;
+					iris.rotation.z = targetZ;
+					
+					// Use calibrated texture values
+					eyeballMaterial.uniforms.textureZoom.value = 0.99;
+					eyeballMaterial.uniforms.aspectRatio.value = 2.30;
+				} else {
+					// Manual mode: use slider values
+					iris.rotation.x = Number(rotationX);
+					iris.rotation.y = Number(rotationY);
+					iris.rotation.z = Number(rotationZ);
+					eyeballMaterial.uniforms.textureZoom.value = Number(textureZoom);
+					eyeballMaterial.uniforms.aspectRatio.value = Number(aspectRatio);
+				}
             }
 			
 			renderer.render(scene, camera);
@@ -184,6 +218,7 @@
 		
 		// Cleanup function
 		return () => {
+			window.removeEventListener('mousemove', handleMouseMove);
 			window.removeEventListener('resize', handleResize);
 			if (renderer) {
 				renderer.dispose();
@@ -209,7 +244,8 @@
 	</div>
 </div>
 
-<!-- Debug Controls -->
+<!-- Debug Controls - Only show when in manual mode -->
+{#if controlMode === 'manual'}
 <div class="fixed bottom-4 left-1/2 -translate-x-1/2 w-full max-w-lg p-4 bg-black/50 rounded-lg backdrop-blur-sm text-white font-mono text-xs z-10 space-y-3">
 	<!-- Rotation X Slider -->
 	<div>
@@ -243,7 +279,7 @@
 		</div>
 		<input type="range" id="zoom" bind:value={textureZoom} min="0.1" max="5" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
 	</div>
-	<!-- NEW: Aspect Ratio Slider -->
+	<!-- Aspect Ratio Slider -->
 	<div>
 		<div class="flex justify-between">
 			<label for="aspect">Aspect Ratio</label>
@@ -252,3 +288,4 @@
 		<input type="range" id="aspect" bind:value={aspectRatio} min="0.1" max="3.0" step="0.01" class="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500">
 	</div>
 </div>
+{/if}

@@ -10,6 +10,9 @@
   // Track if the app has mounted for better control
   let isMounted = $state(false);
   
+  // Control mode for the Hero component - change this to switch modes
+  let eyeControlMode: 'mouse' | 'manual' = 'mouse'; // Change to 'manual' for debugging
+  
   // Use $effect instead of onMount for side effects
   $effect(() => {
     if (!isMounted) { // Only run once
@@ -31,7 +34,7 @@
   
   <!-- Hero Section with 3D Iris -->
   <section class="relative min-h-screen flex flex-col justify-center items-center pt-20">
-    <Hero />
+    <Hero controlMode={eyeControlMode} />
     <CtaRow />
   </section>
   
