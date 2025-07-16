@@ -78,7 +78,7 @@
 		renderer.setPixelRatio(window.devicePixelRatio);
 		
 		const textureLoader = new THREE.TextureLoader();
-		const eyeTexture = textureLoader.load('/assets/eye-texture2.png', (texture) => {
+		const eyeTexture = textureLoader.load('/assets/eye-texture2.png', (texture: any) => {
 			texture.wrapS = THREE.ClampToEdgeWrapping;
 			texture.wrapT = THREE.ClampToEdgeWrapping;
 			texture.minFilter = THREE.LinearFilter;
@@ -193,7 +193,7 @@
 	});
 </script>
 
-<div class="fixed inset-0 -z-10 bg-[#0a0e27]">
+<div class="fixed inset-0 -z-10">
 	<canvas bind:this={canvas} class="w-full h-full"></canvas>
 	
 	<!-- Gradient overlay -->
