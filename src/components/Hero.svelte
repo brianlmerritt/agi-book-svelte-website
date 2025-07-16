@@ -97,21 +97,23 @@
 					vec3 finalColor;
 					float finalAlpha = 1.0;
 					
-					// Define sclera (white part of eye) color
-					vec3 scleraColor = vec3(0.9, 0.9, 0.95);
-
-					// Check if the zoomed UV is within the texture's 0-1 range
-					if (zoomedUv.x > 1.0 || zoomedUv.x < 0.0 || zoomedUv.y > 1.0 || zoomedUv.y < 0.0) {
-						// Outside texture bounds - render sclera
-						finalColor = scleraColor;
-					} else {
-						// Inside bounds - sample texture and blend with sclera based on alpha
-						vec4 textureColor = texture2D(eyeTexture, zoomedUv);
-						
-						// OPTION 2: Proper alpha blending with sclera
-						// This respects PNG transparency and creates smooth transitions
-						finalColor = mix(scleraColor, textureColor.rgb, textureColor.a);
-					}
+					// CHANGED: Instead of clipping to white, let the pattern repeat/tile
+					// Use fract() to make the texture repeat seamlessly across the surface
+					vec2 tiledUv = fract(zoomedUv);
+					
+					// Sample the texture with the tiled coordinates
+					vec4 textureColor = texture2D(eyeTexture, tiledUv);
+					
+					// Use the texture pattern across the entire surface
+					finalColor = textureColor.rgb;
+					
+					// Add distance-based fade to create depth (optional - makes center more prominent)
+					vec2 center = vec2(0.5, 0.5);
+					float distFromCenter = distance(correctedUv, center);
+					float fadeOut = 1.0 - smoothstep(0.3, 0.8, distFromCenter);
+					
+					// Apply fade to make the pattern subtler towards edges (optional)
+					finalColor = mix(finalColor * 0.7, finalColor, fadeOut);
 					
 					// Add subtle shimmer over the whole eye surface
 					float shimmer = sin(vUv.x * 15.0 + time * 2.0) * sin(vUv.y * 15.0 - time * 1.5) * 0.02;
