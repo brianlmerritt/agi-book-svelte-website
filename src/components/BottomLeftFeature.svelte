@@ -90,7 +90,7 @@
         <div class="ai-desc">{aiCharacters[selectedIdx].description}</div>
       </div>
     {/if}
-    <button class="close-btn" style="position:absolute; top:1.5rem; right:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
+    <button class="close-btn" style="position:absolute; bottom:1.5rem; left:1.5rem; z-index:70; font-size:2rem; background:none; border:none; color:white; cursor:pointer;" onclick={close} aria-label="Close">✕</button>
   </div>
 {/if}
 

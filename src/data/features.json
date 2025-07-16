@@ -3,24 +3,24 @@
     "corner": "top-left",
     "title": "Read \nChapter 1",
     "description": "Chapter 1 - ChatGpt o3 version.",
-    "icon": "🌌"
+    "icon": "📖"
   },
   {
     "corner": "top-right",
     "title": "Meet the Humans",
     "description": "The human characters of AGI:theBook.",
-    "icon": "🤖"
+    "icon": "👩‍🦰"
   },
   {
     "corner": "bottom-left",
     "title": "Meet the AIs",
-    "description": "Shape the narrative with your input.",
-    "icon": "💫"
+    "description": "Who is who in the AI Universe.",
+    "icon": "🤖"
   },
   {
     "corner": "bottom-right",
     "title": "Buy AI \nPrompt Kit",
-    "description": "Join a vibrant community of readers.",
-    "icon": "👥"
+    "description": "Get the complete book AND the AI Prompts that created it.",
+    "icon": "🔧"
   }
-] 
+]
