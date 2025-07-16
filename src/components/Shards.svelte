@@ -53,10 +53,10 @@
 		renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 		// --- CRYSTAL SHARD GENERATION ---
-		const crystals: { mesh: THREE.Mesh; velocity: THREE.Vector3 }[] = [];
+		const crystals: { mesh: any; velocity: any; stuckTime: number; lastPosition: any; respawnTimer: number }[] = [];
 		const bounds = { x: 50, y: 25, z: 30 };
 
-		const createCrystal = (geometry: THREE.BufferGeometry, color: THREE.ColorRepresentation, opacity: number) => {
+		const createCrystal = (geometry: any, color: any, opacity: number) => {
 			const material = new THREE.MeshStandardMaterial({
 				color: color,
 				roughness: 0.2,
@@ -79,7 +79,13 @@
 			);
 
 			scene.add(mesh);
-			crystals.push({ mesh, velocity });
+			crystals.push({ 
+				mesh, 
+				velocity, 
+				stuckTime: 0,
+				lastPosition: mesh.position.clone(),
+				respawnTimer: Math.random() * 600 + 800 // Random respawn time between 800-1400 frames (13-23 seconds)
+			});
 		};
 
 		const diamondGeom = new THREE.OctahedronGeometry(1, 0);
@@ -107,11 +113,73 @@
 		};
 		window.addEventListener('resize', handleResize);
 
+		// Function to respawn a crystal with fade transition
+		const respawnCrystal = (crystal: any, index: number) => {
+			// Fade out
+			gsap.to(crystal.mesh.material, {
+				opacity: 0,
+				duration: 1.2,
+				ease: 'power2.out',
+				onComplete: () => {
+					// Move to new position near center
+					const newX = (Math.random() - 0.5) * bounds.x * 0.6; // Closer to center
+					const newY = (Math.random() - 0.5) * bounds.y * 0.6;
+					const newZ = (Math.random() - 0.5) * bounds.z * 0.6;
+					
+					crystal.mesh.position.set(newX, newY, newZ);
+					crystal.velocity.set(
+						(Math.random() - 0.5) * 0.02,
+						(Math.random() - 0.5) * 0.02,
+						(Math.random() - 0.5) * 0.02
+					);
+					crystal.stuckTime = 0;
+					crystal.lastPosition.copy(crystal.mesh.position);
+					crystal.respawnTimer = Math.random() * 600 + 800;
+					
+					// Fade in
+					gsap.to(crystal.mesh.material, {
+						opacity: crystal.mesh.material.color.getHex() === 0x9966ff ? 0.85 : 
+								crystal.mesh.material.color.getHex() === 0xffccaa ? 0.75 :
+								crystal.mesh.material.color.getHex() === 0x66ddff ? 0.9 :
+								crystal.mesh.material.color.getHex() === 0xeeffaa ? 0.8 : 0.8,
+						duration: 1.2,
+						ease: 'power2.out'
+					});
+				}
+			});
+		};
+
 		// --- RENDER LOOP ---
 		const animate = () => {
 			animationFrameId = requestAnimationFrame(animate);
 
-			crystals.forEach(crystal => {
+			crystals.forEach((crystal, index) => {
+				// Check if crystal has moved significantly
+				const distanceMoved = crystal.mesh.position.distanceTo(crystal.lastPosition);
+				if (distanceMoved < 0.1) {
+					crystal.stuckTime++;
+				} else {
+					crystal.stuckTime = 0;
+				}
+				crystal.lastPosition.copy(crystal.mesh.position);
+
+				// Center-seeking behavior for stuck crystals
+				if (crystal.stuckTime > 120) { // 2 seconds at 60fps
+					const centerForce = new THREE.Vector3(
+						-crystal.mesh.position.x * 0.01,
+						-crystal.mesh.position.y * 0.01,
+						-crystal.mesh.position.z * 0.01
+					);
+					crystal.velocity.add(centerForce);
+				}
+
+				// Respawn timer
+				crystal.respawnTimer--;
+				if (crystal.respawnTimer <= 0) {
+					respawnCrystal(crystal, index);
+					return; // Skip this frame's update
+				}
+
 				const mousePos2D = new THREE.Vector2(smoothedMouse.x * (bounds.x / 2), smoothedMouse.y * (bounds.y / 2));
 				const crystalPos2D = new THREE.Vector2(crystal.mesh.position.x, crystal.mesh.position.y);
 				const distanceToMouse = crystalPos2D.distanceTo(mousePos2D);
@@ -129,36 +197,52 @@
 
 				crystal.velocity.multiplyScalar(0.98);
 
-				const maxSpeed = 0.1;
+				// Maximum speed limit for each shard
+				const maxSpeed = 0.08;
 				if (crystal.velocity.length() > maxSpeed) {
 					crystal.velocity.normalize().multiplyScalar(maxSpeed);
 				}
 
 				crystal.mesh.position.add(crystal.velocity);
 
-				// FIX: More robust wall bouncing with position clamping to prevent "tunneling".
-				if (crystal.mesh.position.x > bounds.x / 2) {
-					crystal.mesh.position.x = bounds.x / 2;
-					crystal.velocity.x *= -1;
-				} else if (crystal.mesh.position.x < -bounds.x / 2) {
-					crystal.mesh.position.x = -bounds.x / 2;
-					crystal.velocity.x *= -1;
+				// Improved boundary handling with bounce and inward force
+				const margin = 2; // Keep crystals away from exact boundaries
+				const bounceStrength = 0.8;
+				
+				if (crystal.mesh.position.x > bounds.x / 2 - margin) {
+					crystal.mesh.position.x = bounds.x / 2 - margin;
+					crystal.velocity.x *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.x -= 0.005;
+				} else if (crystal.mesh.position.x < -bounds.x / 2 + margin) {
+					crystal.mesh.position.x = -bounds.x / 2 + margin;
+					crystal.velocity.x *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.x += 0.005;
 				}
 
-				if (crystal.mesh.position.y > bounds.y / 2) {
-					crystal.mesh.position.y = bounds.y / 2;
-					crystal.velocity.y *= -1;
-				} else if (crystal.mesh.position.y < -bounds.y / 2) {
-					crystal.mesh.position.y = -bounds.y / 2;
-					crystal.velocity.y *= -1;
+				if (crystal.mesh.position.y > bounds.y / 2 - margin) {
+					crystal.mesh.position.y = bounds.y / 2 - margin;
+					crystal.velocity.y *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.y -= 0.005;
+				} else if (crystal.mesh.position.y < -bounds.y / 2 + margin) {
+					crystal.mesh.position.y = -bounds.y / 2 + margin;
+					crystal.velocity.y *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.y += 0.005;
 				}
 
-				if (crystal.mesh.position.z > bounds.z / 2) {
-					crystal.mesh.position.z = bounds.z / 2;
-					crystal.velocity.z *= -1;
-				} else if (crystal.mesh.position.z < -bounds.z / 2) {
-					crystal.mesh.position.z = -bounds.z / 2;
-					crystal.velocity.z *= -1;
+				if (crystal.mesh.position.z > bounds.z / 2 - margin) {
+					crystal.mesh.position.z = bounds.z / 2 - margin;
+					crystal.velocity.z *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.z -= 0.005;
+				} else if (crystal.mesh.position.z < -bounds.z / 2 + margin) {
+					crystal.mesh.position.z = -bounds.z / 2 + margin;
+					crystal.velocity.z *= -bounceStrength;
+					// Add inward force
+					crystal.velocity.z += 0.005;
 				}
 
 				crystal.mesh.rotation.x += 0.001;
@@ -177,7 +261,7 @@
 			crystals.forEach(c => {
 				scene.remove(c.mesh);
 				c.mesh.geometry.dispose();
-				(c.mesh.material as THREE.Material).dispose();
+				(c.mesh.material as any).dispose();
 			});
 			renderer.dispose();
 		};
