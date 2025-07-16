@@ -57,13 +57,20 @@
 		const bounds = { x: 50, y: 25, z: 30 };
 
 		const createCrystal = (geometry: any, color: any, opacity: number) => {
-			const material = new THREE.MeshStandardMaterial({
+			// Create a more crystalline material with better properties
+			const material = new THREE.MeshPhysicalMaterial({
 				color: color,
-				roughness: 0.2,
-				metalness: 0.1,
+				roughness: 0.05, // Much smoother for crystal-like appearance
+				metalness: 0.0, // No metalness for crystal
 				transparent: true,
 				opacity: opacity,
-				flatShading: true, 
+				flatShading: true,
+				clearcoat: 1.0, // Add clearcoat for extra shine
+				clearcoatRoughness: 0.1, // Smooth clearcoat
+				ior: 1.5, // Index of refraction for glass-like appearance
+				transmission: 0.3, // Some light transmission
+				thickness: 0.5, // Material thickness for transmission
+				envMapIntensity: 1.2, // Enhance environment reflections
 			});
 			const mesh = new THREE.Mesh(geometry, material);
 			
@@ -94,17 +101,34 @@
 		const shardGeom = new THREE.ConeGeometry(0.6, 2.4, 5);
 		const clusterGeom = new THREE.IcosahedronGeometry(1.2, 0);
 
-		createCrystal(diamondGeom, 0x9966ff, 0.85);
-		createCrystal(columnGeom, 0xffccaa, 0.75);
-		createCrystal(hexGeom, 0x66ddff, 0.9);
-		createCrystal(shardGeom, 0xeeffaa, 0.8);
-		createCrystal(clusterGeom, 0xff8888, 0.8);
+		// More vibrant, crystalline colors
+		createCrystal(diamondGeom, 0x00ffff, 0.9); // Cyan diamond
+		createCrystal(columnGeom, 0xff69b4, 0.85); // Hot pink column
+		createCrystal(hexGeom, 0x00ff00, 0.9); // Bright green hex
+		createCrystal(shardGeom, 0xffd700, 0.9); // Gold shard
+		createCrystal(clusterGeom, 0xff1493, 0.85); // Deep pink cluster
 
-		const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+		// Enhanced lighting for crystalline appearance
+		const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
 		scene.add(ambientLight);
-		const directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+		
+		// Main directional light
+		const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2);
 		directionalLight.position.set(5, 10, 7.5);
 		scene.add(directionalLight);
+		
+		// Additional lights for sparkle effect
+		const pointLight1 = new THREE.PointLight(0x00ffff, 0.8, 50);
+		pointLight1.position.set(10, 5, 10);
+		scene.add(pointLight1);
+		
+		const pointLight2 = new THREE.PointLight(0xff69b4, 0.8, 50);
+		pointLight2.position.set(-10, -5, -10);
+		scene.add(pointLight2);
+		
+		const pointLight3 = new THREE.PointLight(0x00ff00, 0.6, 40);
+		pointLight3.position.set(0, 15, 0);
+		scene.add(pointLight3);
 
 		const handleResize = () => {
 			camera.aspect = window.innerWidth / window.innerHeight;
@@ -136,12 +160,12 @@
 					crystal.lastPosition.copy(crystal.mesh.position);
 					crystal.respawnTimer = Math.random() * 600 + 800;
 					
-					// Fade in
+					// Fade in with updated opacity values for new colors
 					gsap.to(crystal.mesh.material, {
-						opacity: crystal.mesh.material.color.getHex() === 0x9966ff ? 0.85 : 
-								crystal.mesh.material.color.getHex() === 0xffccaa ? 0.75 :
-								crystal.mesh.material.color.getHex() === 0x66ddff ? 0.9 :
-								crystal.mesh.material.color.getHex() === 0xeeffaa ? 0.8 : 0.8,
+						opacity: crystal.mesh.material.color.getHex() === 0x00ffff ? 0.9 : 
+								crystal.mesh.material.color.getHex() === 0xff69b4 ? 0.85 :
+								crystal.mesh.material.color.getHex() === 0x00ff00 ? 0.9 :
+								crystal.mesh.material.color.getHex() === 0xffd700 ? 0.9 : 0.85,
 						duration: 1.2,
 						ease: 'power2.out'
 					});
@@ -272,8 +296,10 @@
 					crystal.velocity.z += 0.005;
 				}
 
-				crystal.mesh.rotation.x += 0.001;
-				crystal.mesh.rotation.y += 0.002;
+				// Enhanced rotation for sparkle effect
+				crystal.mesh.rotation.x += 0.003;
+				crystal.mesh.rotation.y += 0.004;
+				crystal.mesh.rotation.z += 0.002;
 			});
 
 			renderer.render(scene, camera);
