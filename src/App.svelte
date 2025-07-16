@@ -42,7 +42,7 @@
 	<!-- Hero Section with 3D Iris -->
 	<section class="relative min-h-screen flex flex-col justify-center items-center pt-20">
 		<Hero controlMode={eyeControlMode} />
-		<CtaRow />
+		<!--<CtaRow />-->
 	</section>
 	
 	<!-- Features Section -->
