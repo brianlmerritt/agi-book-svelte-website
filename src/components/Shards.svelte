@@ -121,10 +121,10 @@
 				duration: 1.2,
 				ease: 'power2.out',
 				onComplete: () => {
-					// Move to new position near center
-					const newX = (Math.random() - 0.5) * bounds.x * 0.6; // Closer to center
-					const newY = (Math.random() - 0.5) * bounds.y * 0.6;
-					const newZ = (Math.random() - 0.5) * bounds.z * 0.6;
+					// Move to new random position (not necessarily near center)
+					const newX = (Math.random() - 0.5) * bounds.x * 0.8;
+					const newY = (Math.random() - 0.5) * bounds.y * 0.8;
+					const newZ = (Math.random() - 0.5) * bounds.z * 0.8;
 					
 					crystal.mesh.position.set(newX, newY, newZ);
 					crystal.velocity.set(
@@ -163,14 +163,15 @@
 				}
 				crystal.lastPosition.copy(crystal.mesh.position);
 
-				// Center-seeking behavior for stuck crystals
+				// Random movement for stuck crystals instead of center-seeking
 				if (crystal.stuckTime > 120) { // 2 seconds at 60fps
-					const centerForce = new THREE.Vector3(
-						-crystal.mesh.position.x * 0.01,
-						-crystal.mesh.position.y * 0.01,
-						-crystal.mesh.position.z * 0.01
+					const randomForce = new THREE.Vector3(
+						(Math.random() - 0.5) * 0.02,
+						(Math.random() - 0.5) * 0.02,
+						(Math.random() - 0.5) * 0.02
 					);
-					crystal.velocity.add(centerForce);
+					crystal.velocity.add(randomForce);
+					crystal.stuckTime = 0; // Reset stuck time after applying random force
 				}
 
 				// Respawn timer
@@ -204,6 +205,32 @@
 				}
 
 				crystal.mesh.position.add(crystal.velocity);
+
+				// Collision detection between crystals
+				const collisionRadius = 2.5;
+				crystals.forEach((otherCrystal, otherIndex) => {
+					if (index !== otherIndex) {
+						const distance = crystal.mesh.position.distanceTo(otherCrystal.mesh.position);
+						if (distance < collisionRadius) {
+							// Calculate repulsion force
+							const repulsionDirection = new THREE.Vector3()
+								.subVectors(crystal.mesh.position, otherCrystal.mesh.position)
+								.normalize();
+							
+							const repulsionStrength = (collisionRadius - distance) * 0.03;
+							const repulsionForce = repulsionDirection.multiplyScalar(repulsionStrength);
+							
+							crystal.velocity.add(repulsionForce);
+							otherCrystal.velocity.sub(repulsionForce);
+							
+							// Move crystals apart to prevent overlap
+							const separationDistance = collisionRadius - distance;
+							const separationVector = repulsionDirection.multiplyScalar(separationDistance * 0.5);
+							crystal.mesh.position.add(separationVector);
+							otherCrystal.mesh.position.sub(separationVector);
+						}
+					}
+				});
 
 				// Improved boundary handling with bounce and inward force
 				const margin = 2; // Keep crystals away from exact boundaries
