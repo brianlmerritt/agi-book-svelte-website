@@ -13,7 +13,7 @@
   let showModal = $state(false);
   let triangleRef: HTMLDivElement | undefined;
   let modalRef: HTMLDivElement | undefined;
-  const motdHeight = 72; // px
+  const motdHeight = 82; // px
 
   function openModal() {
     showModal = true;

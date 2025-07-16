@@ -78,7 +78,7 @@
 <style>
 .feature-triangle.top-right {
   clip-path: polygon(100% 0, 0 0, 100% 100%);
-  background: linear-gradient(225deg, #ec4899cc 60%, #6b46c1cc 100%);
+  background: linear-gradient(135deg, #6b46c1cc 60%, #ec4899cc 100%);
   transition: box-shadow 0.3s;
   box-shadow: 0 2px 16px 0 #0004;
   display: flex;
