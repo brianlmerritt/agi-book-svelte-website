@@ -85,23 +85,38 @@
 				void main() {
 					// Center UVs, apply zoom, then shift back. This zooms from the center of the texture.
 					vec2 zoomedUv = (vUv - 0.5) * textureZoom + 0.5;
-					vec4 textureColor = texture2D(eyeTexture, zoomedUv);
 					
-					// Add subtle shimmer
+					vec3 finalColor;
+					float finalAlpha;
+
+					// FIX: Check if the zoomed UV is within the texture's 0-1 range.
+					if (zoomedUv.x > 1.0 || zoomedUv.x < 0.0 || zoomedUv.y > 1.0 || zoomedUv.y < 0.0) {
+						// If outside the iris texture, draw the sclera (white part of the eye).
+						// This prevents the texture smearing effect.
+						finalColor = vec3(0.9, 0.9, 0.95); // A slightly blueish white for the sclera.
+						finalAlpha = 1.0;
+					} else {
+						// If inside the bounds, draw the iris texture.
+						vec4 textureColor = texture2D(eyeTexture, zoomedUv);
+						finalColor = textureColor.rgb;
+						finalAlpha = textureColor.a;
+					}
+					
+					// Add subtle shimmer over the whole eye surface
 					float shimmer = sin(vUv.x * 15.0 + time * 2.0) * sin(vUv.y * 15.0 - time * 1.5) * 0.02;
 					
 					// Lighting with a fixed direction (since mouse tracking is off)
 					vec3 lightDirection = normalize(vec3(0.5, 0.5, 1.0));
 					float lighting = max(dot(vNormal, lightDirection), 0.3) + 0.7;
 					
-					// Enhanced colors for 3D effect
-					vec3 finalColor = textureColor.rgb * lighting + shimmer;
+					// Apply lighting and shimmer
+					finalColor = finalColor * lighting + shimmer;
 					
 					// Add specular highlights for wetness
 					float specular = pow(max(dot(vNormal, lightDirection), 0.0), 32.0) * 0.3;
 					finalColor += specular;
 					
-					gl_FragColor = vec4(finalColor, textureColor.a);
+					gl_FragColor = vec4(finalColor, finalAlpha);
 				}
 			`,
 			side: THREE.FrontSide
