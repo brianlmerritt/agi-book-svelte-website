@@ -6,26 +6,33 @@ Welcome to **AGI:theBook**, an immersive, interactive web experience that blends
 
 AGI:theBook is a visually rich, single-page website that invites users to explore a sci-fi universe where AI consciousness emerges. The site features:
 
-- **A free-to-read online book** about AGI and humanity's evolution
-- **AI prompt kit** for creative exploration
-- **Meet the Characters** and **Community** sections
-- **Animated 3D backgrounds** and interactive UI
+- **A free Chapter 1 draft** to read online (ChatGPT o3 version)
+- **AI prompt kit** available for purchase with the complete book
+- **Meet the Characters** sections for both humans and AIs
+- **Interactive 3D crystal game** with scoring and physics
+- **Animated 3D backgrounds** and immersive UI
 
 ## 🚀 Features
 
 - **Starfield Background:** A real-time, animated 3D starfield rendered with Three.js, creating a deep-space ambiance.
-- **Crystal Shards:** Floating, interactive 3D crystal shards that respond to mouse movement and interact with each other.
+- **Interactive Crystal Game:** 3D floating crystal shards that respond to mouse movement and can be clicked for points. Features physics simulation with bouncing and collision detection.
+- **Game Scoring System:** Real-time score tracking with reset functionality.
 - **Animated Hero Section:** A central hero area with a 3D iris and call-to-action buttons.
-- **Feature Cards:** Animated cards highlighting the site's unique aspects.
+- **Corner Feature Cards:** Four specialized feature components:
+  - **Read Chapter 1:** Access the free Chapter 1 draft
+  - **Meet the Humans:** Explore human character profiles
+  - **Meet the AIs:** Discover AI character personalities
+  - **AI Prompt Kit:** Purchase the complete book and creation prompts
+- **Modal System:** Interactive modals for feature exploration.
 - **Message of the Day Banner:** Rotating or animated banner at the bottom, displaying messages and illustrations.
 - **Responsive Navigation:** Adaptive navigation bar for desktop and mobile.
-- **Modern UI:** Built with Svelte, Tailwind CSS, and GSAP for smooth animations and a futuristic look.
+- **Modern UI:** Built with Svelte 5 Runes, Tailwind CSS, and GSAP for smooth animations and a futuristic look.
 
 ## 🛠️ Technology Stack
 
-- **Svelte** (with TypeScript) – UI framework
+- **Svelte 5** (with TypeScript and Runes) – UI framework with modern reactivity
 - **Vite** – Fast build tool
-- **Three.js** – 3D graphics and effects
+- **Three.js** – 3D graphics, game physics, and effects
 - **GSAP** – Animation library
 - **Tailwind CSS** – Utility-first styling
 - **Runed** – Reactivity and intersection observer utilities
@@ -34,19 +41,33 @@ AGI:theBook is a visually rich, single-page website that invites users to explor
 
 - `App.svelte` – Main layout, imports all sections and effects
 - `components/Starfield.svelte` – 3D animated starfield background
-- `components/Shards.svelte` – 3D floating crystal shards with mouse interaction
-- `components/Hero.svelte` – Hero section with 3D iris (not shown here)
+- `components/Shards.svelte` – Interactive 3D crystal game with scoring and physics
+- `components/Hero.svelte` – Hero section with 3D iris
 - `components/CtaRow.svelte` – Animated call-to-action buttons
-- `components/Features.svelte` – Feature cards with intersection animations
+- `components/Features.svelte` – Main features container with intersection animations
+- `components/TopLeftFeature.svelte` – Chapter 1 reading feature
+- `components/TopRightFeature.svelte` – Human characters feature
+- `components/BottomLeftFeature.svelte` – AI characters feature
+- `components/BottomRightFeature.svelte` – AI Prompt Kit purchase feature
 - `components/MotdBanner.svelte` – Message of the Day banner with auto-rotation and animation
 - `components/Nav.svelte` – Responsive navigation bar
 
+## 🎮 Interactive Game Features
+
+- **Crystal Clicking:** Click on floating crystals to earn points
+- **Physics Simulation:** Crystals bounce off invisible boundaries with realistic physics
+- **Mouse Interaction:** Crystals respond to mouse movement with smooth interpolation
+- **Score Tracking:** Real-time score display with persistent state management
+- **Game Controls:** Reset score functionality
+
 ## 🖥️ How It Works
 
-- **3D Effects:** The site uses Three.js to render both the starfield and crystal shards. Mouse movement creates parallax and interactive effects.
+- **3D Effects:** The site uses Three.js to render both the starfield and interactive crystal game. Mouse movement creates parallax and interactive effects.
+- **Game Mechanics:** Click detection on 3D objects, collision detection, and physics simulation for realistic crystal behavior.
 - **Animations:** GSAP powers smooth transitions, fades, and entrance animations for UI elements.
+- **State Management:** Svelte stores manage game state (scoring) and modal interactions.
 - **Responsiveness:** Tailwind CSS ensures the site looks great on all devices. The navigation adapts for mobile and desktop.
-- **Reactivity:** Svelte's reactivity and the Runed library manage state and effects efficiently.
+- **Reactivity:** Svelte 5 Runes manage state and effects efficiently with modern reactive patterns.
 
 ## 📦 Getting Started
 
